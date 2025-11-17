@@ -37,14 +37,14 @@ const InvestmentPlansAdmin = () => {
     }
   };
 
-  const toggleEdit = (id: number) => {
+  const toggleEdit = (id: string) => { // Changed from number to string
     setPlans(plans.map(plan => 
       plan.id === id ? { ...plan, isEditing: !plan.isEditing } : plan
     ));
   };
 
   const handleChange = (
-    id: number, 
+    id: string, // Changed from number to string
     field: keyof InvestmentPlan, 
     value: string | number
   ) => {
@@ -69,7 +69,7 @@ const InvestmentPlansAdmin = () => {
   const handleUpdate = async (plan: EditablePlan) => {
     try {
       const { success, error } = await updateInvestmentPlan({
-        id: plan.id,
+        id: plan.id, // This is now a string (UUID)
         title: plan.title,
         percentage: plan.percentage,
         min_amount: plan.minAmount,

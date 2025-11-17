@@ -55,7 +55,7 @@ const SignOutButton = () => {
   return (
     <button
       onClick={handleSignOut}
-      className="flex items-center w-full py-3 px-3 text-gray-300 hover:text-emerald-400 rounded-lg hover:bg-gray-700"
+      className="flex items-center w-full py-3 px-3 text-gray-300 hover:text-teal-400 rounded-lg hover:bg-gray-700"
     >
       <FiLogOut className="mr-2" />
       <span>Sign Out</span>
@@ -119,7 +119,7 @@ export default function Navbar() {
           {/* Mobile Menu Button (hidden on desktop) */}
           <button 
             onClick={toggleMobileMenu}
-            className="lg:hidden mr-4 text-gray-300 hover:text-emerald-400"
+            className="lg:hidden mr-4 text-gray-300 hover:text-teal-400"
           >
             {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
@@ -129,10 +129,11 @@ export default function Navbar() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className="text-2xl font-bold text-emerald-400 flex items-center"
+            className="text-2xl font-bold text-teal-400 flex items-center"
           >
-            <span className="bg-emerald-500 text-white rounded-lg px-3 py-1 mr-2">A</span>
-            <span>ccilent</span>
+            <span className="bg-teal-500 text-white rounded-lg px-3 py-1 mr-2">C</span>
+            <span>RYPTAURA</span>
+            <span className="text-xs font-medium bg-teal-100 text-teal-800 px-2 py-1 rounded-full ml-2">INVESTSPHERE</span>
           </motion.div>
         </div>
 
@@ -148,7 +149,7 @@ export default function Navbar() {
               >
                 {item.dropdown ? (
                   <>
-                    <button className="flex items-center text-gray-300 hover:text-emerald-400 font-medium transition-colors duration-200 group">
+                    <button className="flex items-center text-gray-300 hover:text-teal-400 font-medium transition-colors duration-200 group">
                       {item.icon}
                       <span>{item.name}</span>
                       <motion.span
@@ -156,7 +157,7 @@ export default function Navbar() {
                         transition={{ duration: 0.2 }}
                         className="ml-1.5"
                       >
-                        <FiChevronDown className="text-sm group-hover:text-emerald-400" />
+                        <FiChevronDown className="text-sm group-hover:text-teal-400" />
                       </motion.span>
                     </button>
                     
@@ -172,12 +173,12 @@ export default function Navbar() {
                           {item.dropdown.map((sub) => (
                             <motion.li 
                               key={sub.name}
-                              whileHover={{ backgroundColor: "rgba(16, 185, 129, 0.1)" }}
+                              whileHover={{ backgroundColor: "rgba(20, 184, 166, 0.1)" }}
                               transition={{ duration: 0.1 }}
                             >
                               <Link
                                 href={sub.href}
-                                className="flex items-center px-4 py-2.5 text-gray-300 hover:text-emerald-400 transition-colors duration-200 text-sm"
+                                className="flex items-center px-4 py-2.5 text-gray-300 hover:text-teal-400 transition-colors duration-200 text-sm"
                               >
                                 {sub.name}
                               </Link>
@@ -190,7 +191,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={item.href}
-                    className="flex items-center text-gray-300 hover:text-emerald-400 font-medium transition-colors duration-200"
+                    className="flex items-center text-gray-300 hover:text-teal-400 font-medium transition-colors duration-200"
                   >
                     {item.icon}
                     {item.name}
@@ -203,8 +204,8 @@ export default function Navbar() {
 
         {/* User profile and sign out */}
         <div className="ml-8 flex items-center space-x-4">
-          <div className="w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center border border-emerald-400/30">
-            <FiUser className="text-emerald-400" />
+          <div className="w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center border border-teal-400/30">
+            <FiUser className="text-teal-400" />
           </div>
           <div className="hidden lg:block">
             <SignOutButton />
@@ -233,13 +234,14 @@ export default function Navbar() {
               className="fixed inset-y-0 left-0 w-80 bg-gray-800 z-50 overflow-y-auto"
             >
               <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-                <div className="text-xl font-bold text-emerald-400 flex items-center">
-                  <span className="bg-emerald-500 text-white rounded-lg px-2 py-1 mr-2">A</span>
-                  <span>ccilent</span>
+                <div className="text-xl font-bold text-teal-400 flex items-center">
+                  <span className="bg-teal-500 text-white rounded-lg px-2 py-1 mr-2">C</span>
+                  <span>RYPTAURA</span>
+                  <span className="text-xs font-medium bg-teal-100 text-teal-800 px-1 py-0.5 rounded-full ml-1">INVESTSPHERE</span>
                 </div>
                 <button 
                   onClick={toggleMobileMenu}
-                  className="text-gray-300 hover:text-emerald-400"
+                  className="text-gray-300 hover:text-teal-400"
                 >
                   <FiX size={24} />
                 </button>
@@ -255,7 +257,7 @@ export default function Navbar() {
                             onClick={() => setActiveDropdown(
                               activeDropdown === item.name ? null : item.name
                             )}
-                            className="flex items-center justify-between w-full py-3 px-3 text-gray-300 hover:text-emerald-400 rounded-lg hover:bg-gray-700"
+                            className="flex items-center justify-between w-full py-3 px-3 text-gray-300 hover:text-teal-400 rounded-lg hover:bg-gray-700"
                           >
                             <div className="flex items-center">
                               {item.icon}
@@ -289,7 +291,7 @@ export default function Navbar() {
                                     <Link
                                       href={sub.href}
                                       onClick={toggleMobileMenu}
-                                      className="block py-2 px-3 text-gray-400 hover:text-emerald-400 hover:bg-gray-700 rounded-lg text-sm"
+                                      className="block py-2 px-3 text-gray-400 hover:text-teal-400 hover:bg-gray-700 rounded-lg text-sm"
                                     >
                                       {sub.name}
                                     </Link>
@@ -303,7 +305,7 @@ export default function Navbar() {
                         <Link
                           href={item.href}
                           onClick={toggleMobileMenu}
-                          className="flex items-center py-3 px-3 text-gray-300 hover:text-emerald-400 rounded-lg hover:bg-gray-700"
+                          className="flex items-center py-3 px-3 text-gray-300 hover:text-teal-400 rounded-lg hover:bg-gray-700"
                         >
                           {item.icon}
                           <span className="ml-2">{item.name}</span>

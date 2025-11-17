@@ -20,7 +20,7 @@ export async function processReferralBonus(depositUserId: string, amount: number
   try {
     // 1. Get the user who made the deposit and check if they were referred
     const { data: refereeData, error: refereeError } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('referred_by')
       .eq('id', depositUserId)
       .single();
@@ -40,7 +40,7 @@ export async function processReferralBonus(depositUserId: string, amount: number
     const bonusAmount = amount * 0.1;
 
     // 3. Update referrer's balance and stats
-    const { error: updateError } = await supabase.rpc('update_referral_earnings', {
+    const { error: updateError } = await supabase.rpc('cryptaura_update_referral_earnings', {
       user_id: referrerId,
       bonus_amount: bonusAmount,
     });
@@ -52,7 +52,7 @@ export async function processReferralBonus(depositUserId: string, amount: number
 
     // 4. Record the referral transaction
     const { error: transactionError } = await supabase
-      .from('referral_transactions')
+      .from('cryptaura_referral_transactions')
       .insert({
         referrer_id: referrerId,
         referee_id: depositUserId,
@@ -84,8 +84,8 @@ export async function getReferralStats(): Promise<{ data?: ReferralStats; error?
   
       // Get total earnings and referral count
       const { data: statsData, error: statsError } = await supabase
-        .from('accilent_profile')
-        .select('referral_count, referral_earnings ')
+        .from('cryptaura_profile')
+        .select('referral_count, referral_earnings, referral_code')
         .eq('id', userId)
         .single();
   
@@ -96,7 +96,7 @@ export async function getReferralStats(): Promise<{ data?: ReferralStats; error?
   
       // Get detailed referral list
       const { data: referralsData, error: referralsError } = await supabase
-        .from('referral_transactions')
+        .from('cryptaura_referral_transactions')
         .select(`
           id,
           referee_id,
@@ -104,7 +104,7 @@ export async function getReferralStats(): Promise<{ data?: ReferralStats; error?
           bonus_amount,
           created_at,
           status,
-          accilent_profile:referee_id(name, email)
+          cryptaura_profile:referee_id(name, email)
         `)
         .eq('referrer_id', userId)
         .order('created_at', { ascending: false });
@@ -116,8 +116,8 @@ export async function getReferralStats(): Promise<{ data?: ReferralStats; error?
   
       const referrals = referralsData?.map(ref => ({
         id: ref.id,
-        name: ref.accilent_profile?.[0]?.name || 'Unknown', // Access first element of array
-        email: ref.accilent_profile?.[0]?.email || 'Unknown', // Access first element of array
+        name: ref.cryptaura_profile?.[0]?.name || 'Unknown',
+        email: ref.cryptaura_profile?.[0]?.email || 'Unknown',
         joinedAt: ref.created_at,
         depositAmount: ref.deposit_amount,
         earningsFromReferral: ref.bonus_amount,
@@ -129,11 +129,10 @@ export async function getReferralStats(): Promise<{ data?: ReferralStats; error?
           totalEarnings: statsData.referral_earnings || 0,
           totalReferrals: statsData.referral_count || 0,
           referrals,
-        //   referralCode: statsData.referral_code // Added referral code to response
         }
       };
     } catch (err) {
       console.error('Unexpected error in getReferralStats:', err);
       return { error: 'An unexpected error occurred' };
     }
-  }
+}

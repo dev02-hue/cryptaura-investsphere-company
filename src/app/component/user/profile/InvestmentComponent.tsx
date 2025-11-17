@@ -98,15 +98,24 @@ export default function InvestmentComponent() {
     setLoading(prev => ({ ...prev, form: true }));
 
     try {
-      const { success, error } = await initiateDeposit({
-        planId: Number(formData.planId),
+      // FIX: Don't convert planId to number - it's a UUID string
+      const { success, error, depositId } = await initiateDeposit({
+        planId: formData.planId, // Keep as string - it's a UUID
         amount: Number(formData.amount),
-        cryptoType: formData.cryptoType as 'BTC' | 'ETH' | 'BNB' | 'DOGE' | 'SOL' | 'USDT',
+        cryptoType: formData.cryptoType,
         transactionHash: formData.transactionHash
       });
 
       if (error) throw new Error(error);
       if (success) {
+        alert(`Deposit initiated successfully! Deposit ID: ${depositId}`);
+        // Reset form
+        setFormData({
+          planId: '',
+          amount: '',
+          cryptoType: '',
+          transactionHash: ''
+        });
         // Refresh data
         const { data: newDeposits } = await getUserDeposits();
         setDeposits(newDeposits || []);
@@ -119,7 +128,7 @@ export default function InvestmentComponent() {
     }
   };
 
-  const selectedPlan = plans.find(plan => plan.id === Number(formData.planId));
+  const selectedPlan = plans.find(plan => plan.id === formData.planId); // FIX: Direct string comparison
   const selectedCrypto = paymentOptions.find(option => option.symbol === formData.cryptoType);
 
   const getCryptoIcon = (symbol: string) => {
@@ -239,7 +248,7 @@ export default function InvestmentComponent() {
                       </ul>
                       <button
                         onClick={() => {
-                          setFormData(prev => ({ ...prev, planId: plan.id.toString() }));
+                          setFormData(prev => ({ ...prev, planId: plan.id })); // FIX: Use plan.id directly (UUID string)
                           setActiveTab('deposit');
                         }}
                         className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition text-sm sm:text-base"
@@ -270,7 +279,7 @@ export default function InvestmentComponent() {
                   >
                     <option value="">-- Select Plan --</option>
                     {plans.map(plan => (
-                      <option key={plan.id} value={plan.id}>
+                      <option key={plan.id} value={plan.id}> {/* FIX: Use plan.id (UUID) as value */}
                         {plan.title} (${plan.minAmount}-${plan.maxAmount})
                       </option>
                     ))}

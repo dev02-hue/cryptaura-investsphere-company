@@ -7,30 +7,39 @@ import { GiReceiveMoney, GiPayMoney } from 'react-icons/gi';
 
 const plans = [
   {
-    title: "Starter",
-    percentage: 5,
+    title: "Starter Plan",
+    percentage: 30,
     min: 100,
+    max: 1000,
+    duration: "24 Hours",
+    interval: "One-time",
+    referral: "10%",
+  },
+  {
+    title: "Investors Plan",
+    percentage: 35,
+    min: 999.99,
     max: 5000,
-    duration: "Three Days",
-    interval: "Daily",
+    duration: "48 Hours",
+    interval: "One-time",
     referral: "10%",
   },
   {
-    title: "Advanced",
-    percentage: 8,
+    title: "Standard Plan",
+    percentage: 45,
     min: 5000,
-    max: 11500,
-    duration: "Four Days",
-    interval: "Daily",
+    max: 10000,
+    duration: "7 Days",
+    interval: "One-time",
     referral: "10%",
   },
   {
-    title: "Professional",
-    percentage: 10,
-    min: 11500,
-    max: 100000,
-    duration: "Five Days",
-    interval: "Daily",
+    title: "Executive Plan",
+    percentage: 50,
+    min: 10000,
+    max: 1000000, // Large number to represent "unlimited"
+    duration: "14 Days",
+    interval: "One-time",
     referral: "10%",
   },
 ];
@@ -54,9 +63,40 @@ export default function InvestmentCalculator() {
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Calculate earnings
-  const dailyEarnings = (investmentAmount * selectedPlan.percentage) / 100;
-  const totalEarnings = dailyEarnings * (selectedPlan.title === "Starter" ? 3 : selectedPlan.title === "Advanced" ? 4 : 5);
+  // Get duration in days for calculation
+  const getDurationInDays = () => {
+    switch (selectedPlan.title) {
+      case "Starter Plan": return 1; // 24 hours = 1 day
+      case "Investors Plan": return 2; // 48 hours = 2 days
+      case "Standard Plan": return 7;
+      case "Executive Plan": return 14;
+      default: return 1;
+    }
+  };
+
+  // Calculate earnings based on plan duration with daily breakdown
+  const calculateTotalEarnings = () => {
+    const roiPercentage = selectedPlan.percentage;
+    const totalEarnings = (investmentAmount * roiPercentage) / 100;
+    return totalEarnings;
+  };
+
+  // Calculate daily earnings
+  const calculateDailyEarnings = () => {
+    const totalEarnings = calculateTotalEarnings();
+    const durationInDays = getDurationInDays();
+    return totalEarnings / durationInDays;
+  };
+
+  // Calculate total return (investment + earnings)
+  const calculateTotalReturn = () => {
+    return investmentAmount + calculateTotalEarnings();
+  };
+
+  const totalEarnings = calculateTotalEarnings();
+  const totalReturn = calculateTotalReturn();
+  const durationInDays = getDurationInDays();
+  const dailyEarnings = calculateDailyEarnings();
 
   // Fetch crypto data
   useEffect(() => {
@@ -114,6 +154,10 @@ export default function InvestmentCalculator() {
     }).format(value);
   };
 
+  const getMaxDisplayValue = () => {
+    return selectedPlan.max >= 1000000 ? "Unlimited" : formatCurrency(selectedPlan.max);
+  };
+
   return (
     <section className="py-16 bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -125,7 +169,7 @@ export default function InvestmentCalculator() {
         >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Investment Tools</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Calculate your potential earnings or convert between cryptocurrencies
+            Calculate your potential earnings with CRYPTAURA INVESTSPHERE COMPANY or convert between cryptocurrencies
           </p>
         </motion.div>
 
@@ -159,7 +203,7 @@ export default function InvestmentCalculator() {
               transition={{ duration: 0.3 }}
               className="bg-white rounded-xl shadow-lg overflow-hidden"
             >
-              <div className="grid md:grid-cols-3 gap-0">
+              <div className="grid md:grid-cols-4 gap-0">
                 {/* Plan Selection */}
                 <div className="p-6 bg-gray-50 border-r border-gray-200">
                   <h3 className="text-xl font-semibold text-gray-800 mb-6">Choose Your Plan</h3>
@@ -173,19 +217,19 @@ export default function InvestmentCalculator() {
                         className={`p-4 rounded-lg cursor-pointer transition-all ${selectedPlan.title === plan.title ? 'bg-teal-600 text-white shadow-md' : 'bg-white hover:bg-gray-100 border border-gray-200'}`}
                       >
                         <div className="flex justify-between items-center">
-                          <h4 className="font-bold">{plan.title}</h4>
-                          <span className={`px-2 py-1 rounded text-sm font-semibold ${selectedPlan.title === plan.title ? 'bg-teal-700' : 'bg-teal-100 text-teal-800'}`}>
+                          <h4 className="font-bold text-sm">{plan.title}</h4>
+                          <span className={`px-2 py-1 rounded text-xs font-semibold ${selectedPlan.title === plan.title ? 'bg-teal-700' : 'bg-teal-100 text-teal-800'}`}>
                             {plan.percentage}%
                           </span>
                         </div>
-                        <div className="mt-2 text-sm">
+                        <div className="mt-2 text-xs">
                           <div className="flex items-center">
                             <GiPayMoney className="mr-2" />
                             <span>Min: {formatCurrency(plan.min)}</span>
                           </div>
                           <div className="flex items-center">
                             <GiReceiveMoney className="mr-2" />
-                            <span>Max: {formatCurrency(plan.max)}</span>
+                            <span>Max: {plan.max >= 1000000 ? "Unlimited" : formatCurrency(plan.max)}</span>
                           </div>
                         </div>
                       </motion.div>
@@ -194,44 +238,46 @@ export default function InvestmentCalculator() {
                 </div>
 
                 {/* Calculator */}
-                <div className="p-6 md:col-span-2">
+                <div className="p-6 md:col-span-3">
                   <h3 className="text-xl font-semibold text-gray-800 mb-6">Investment Calculator</h3>
                   
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Investment Amount ({formatCurrency(selectedPlan.min)} - {formatCurrency(selectedPlan.max)})
+                      Investment Amount ({formatCurrency(selectedPlan.min)} - {getMaxDisplayValue()})
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                       <input
                         type="number"
                         min={selectedPlan.min}
-                        max={selectedPlan.max}
+                        max={selectedPlan.max >= 1000000 ? undefined : selectedPlan.max}
                         value={investmentAmount}
                         onChange={handleAmountChange}
                         className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       />
-                      <div className="mt-2">
-                        <input
-                          type="range"
-                          min={selectedPlan.min}
-                          max={selectedPlan.max}
-                          value={investmentAmount}
-                          onChange={handleAmountChange}
-                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                        />
-                      </div>
+                      {selectedPlan.max < 1000000 && (
+                        <div className="mt-2">
+                          <input
+                            type="range"
+                            min={selectedPlan.min}
+                            max={selectedPlan.max}
+                            value={investmentAmount}
+                            onChange={handleAmountChange}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center text-gray-600 mb-2">
                         <FaPercentage className="mr-2" />
-                        <span className="text-sm font-medium">Daily Profit</span>
+                        <span className="text-sm font-medium">ROI Percentage</span>
                       </div>
                       <div className="text-2xl font-bold text-teal-600">
-                        {formatCurrency(dailyEarnings)}
+                        {selectedPlan.percentage}%
                       </div>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
@@ -239,21 +285,82 @@ export default function InvestmentCalculator() {
                         <FaClock className="mr-2" />
                         <span className="text-sm font-medium">Duration</span>
                       </div>
-                      <div className="text-2xl font-bold text-teal-600">
+                      <div className="text-xl font-bold text-teal-600">
                         {selectedPlan.duration}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {durationInDays} day{durationInDays !== 1 ? 's' : ''}
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="flex items-center text-gray-600 mb-2">
+                        <GiReceiveMoney className="mr-2" />
+                        <span className="text-sm font-medium">Daily Earnings</span>
+                      </div>
+                      <div className="text-xl font-bold text-teal-600">
+                        {formatCurrency(dailyEarnings)}
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="flex items-center text-gray-600 mb-2">
+                        <GiReceiveMoney className="mr-2" />
+                        <span className="text-sm font-medium">Total Return</span>
+                      </div>
+                      <div className="text-xl font-bold text-teal-600">
+                        {formatCurrency(totalReturn)}
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-teal-50 border border-teal-100 rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-700 font-medium">Total Earnings:</span>
-                      <span className="text-2xl font-bold text-teal-700">
-                        {formatCurrency(totalEarnings)}
-                      </span>
+                  <div className="bg-teal-50 border border-teal-100 rounded-lg p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-gray-700 font-medium">Investment Amount:</span>
+                          <span className="text-lg font-bold text-gray-800">
+                            {formatCurrency(investmentAmount)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-gray-700 font-medium">Daily Profit:</span>
+                          <span className="text-lg font-bold text-teal-700">
+                            {formatCurrency(dailyEarnings)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-gray-700 font-medium">Total Profit:</span>
+                          <span className="text-lg font-bold text-teal-700">
+                            {formatCurrency(totalEarnings)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="bg-white rounded-lg p-4 border border-teal-200">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-700 font-medium">Total Return:</span>
+                          <span className="text-2xl font-bold text-teal-700">
+                            {formatCurrency(totalReturn)}
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-600 mt-2">
+                          Based on {selectedPlan.percentage}% ROI over {durationInDays} day{durationInDays !== 1 ? 's' : ''}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {formatCurrency(dailyEarnings)} per day
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      Based on {selectedPlan.percentage}% daily for {selectedPlan.duration}
+                  </div>
+
+                  {/* Bonus Information */}
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-600">
+                    <div className="text-center p-2 bg-green-50 rounded-lg">
+                      <strong>10%</strong> Referral Bonus
+                    </div>
+                    <div className="text-center p-2 bg-blue-50 rounded-lg">
+                      <strong>5%</strong> Deposit Bonus
+                    </div>
+                    <div className="text-center p-2 bg-purple-50 rounded-lg">
+                      <strong>No</strong> Withdrawal Charges
                     </div>
                   </div>
                 </div>

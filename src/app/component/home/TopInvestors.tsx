@@ -27,7 +27,7 @@ const TopInvestors = () => {
       image: '/avatar.jpeg',
       investmentAmount: '$4k',
       investmentFocus: 'Fintech & Blockchain',
-      quote: "Accilent Finance Limited represents the future of borderless finance with their innovative approach."
+      quote: "CRYPTAURA INVESTSPHERE COMPANY represents the future of borderless finance with their innovative approach."
     },
     {
       id: '2',
@@ -45,7 +45,7 @@ const TopInvestors = () => {
       image: '/premium_photo-1688350808212-4e6908a03925.avif',
       investmentAmount: '$10k',
       investmentFocus: 'AI-Driven Financial Services',
-      quote: "Accilent Finance Limited combines regulatory excellence with true technological innovation."
+      quote: "CRYPTAURA INVESTSPHERE COMPANY combines regulatory excellence with true technological innovation."
     },
     {
       id: '4',
@@ -63,7 +63,7 @@ const TopInvestors = () => {
       image: '/photo-1668639534786-2a1f0e476755.avif',
       investmentAmount: '$6k',
       investmentFocus: 'Emerging Market Expansion',
-      quote: "Accilent Finance Limited has the perfect strategy for serving global digital nomads and expats."
+      quote: "CRYPTAURA INVESTSPHERE COMPANY has the perfect strategy for serving global digital nomads and expats."
     }
   ];
 
@@ -92,7 +92,7 @@ const TopInvestors = () => {
             <span>Investors</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Visionary partners who believe in our mission of borderless banking
+            Visionary partners who believe in our mission of innovative investment solutions
           </p>
         </motion.div>
 
@@ -223,9 +223,9 @@ const TopInvestors = () => {
                   )}
 
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-gray-900 mb-2">About Accilent Finance Limited Investment</h3>
+                    <h3 className="font-medium text-gray-900 mb-2">About CRYPTAURA INVESTSPHERE COMPANY Investment</h3>
                     <p className="text-gray-600">
-                      Our investors share our vision for borderless banking and support our mission to deliver innovative financial solutions worldwide.
+                      Our investors share our vision for innovative investment solutions and support our mission to deliver exceptional financial returns worldwide.
                     </p>
                   </div>
                 </div>

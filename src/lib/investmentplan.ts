@@ -1,19 +1,19 @@
 "use server";
-import { CryptoPaymentOption, Deposit, DepositInput, DepositStatus, InvestmentPlan,   UpdateInvestmentPlanInput } from "@/types/businesses";
+import { CryptoPaymentOption, Deposit, DepositInput, DepositStatus, InvestmentPlan, UpdateInvestmentPlanInput } from "@/types/businesses";
 import { getSession } from "./auth";
 import { supabase } from "./supabaseClient";
 import nodemailer from "nodemailer";
 import { redirect } from "next/navigation";
 import { processReferralBonus } from "./referral";
 
-  async function sendDepositApprovalEmail(userId: string, details: {
+async function sendDepositApprovalEmail(userId: string, details: {
   amount: number;
   depositId: string;
   cryptoType: string;
 }) {
   try {
     const { data: user } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('email, username')
       .eq('id', userId)
       .single();
@@ -32,7 +32,7 @@ import { processReferralBonus } from "./referral";
     });
 
     const mailOptions = {
-      from: `Accilent Finance Limited <${process.env.EMAIL_USERNAME}>`,
+      from: `Cryptaura Finance Limited <${process.env.EMAIL_USERNAME}>`,
       to: user.email,
       subject: `Deposit of $${details.amount} Approved Successfully`,
       html: `
@@ -46,20 +46,18 @@ import { processReferralBonus } from "./referral";
     
           <p><strong>Deposit ID:</strong> ${details.depositId}</p>
     
-    
           <p>Your funds have been credited to your account and will now begin accruing returns based on your selected investment plan.</p>
     
-          <p>If you have any questions or require further assistance, please don’t hesitate to contact us.</p>
+          <p>If you have any questions or require further assistance, please don't hesitate to contact us.</p>
     
           <p style="margin-top: 30px;">
-            <strong>Accilent Finance Limited</strong><br>
-            <a href="mailto:accillents@gmail.com">accillents@gmail.com</a><br>
+            <strong>Cryptaura Finance Limited</strong><br>
+            <a href="mailto:cryptaura@gmail.com">cryptaura@gmail.com</a><br>
             <em>Empowering Smart Investments</em>
           </p>
         </div>
       `,
     };
-    
 
     await transporter.sendMail(mailOptions);
     console.log('Deposit approval email sent to:', user.email);
@@ -69,7 +67,7 @@ import { processReferralBonus } from "./referral";
 }
 
 // Helper function to send deposit rejection email
- async function sendDepositRejectionEmail(userId: string, details: {
+async function sendDepositRejectionEmail(userId: string, details: {
   amount: number;
   depositId: string;
   cryptoType: string;
@@ -77,7 +75,7 @@ import { processReferralBonus } from "./referral";
 }) {
   try {
     const { data: user } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('email, username')
       .eq('id', userId)
       .single();
@@ -96,38 +94,34 @@ import { processReferralBonus } from "./referral";
     });
 
     const mailOptions = {
-      from: `Accilent Finance Limited <${process.env.EMAIL_USERNAME}>`,
+      from: `Cryptaura Finance Limited <${process.env.EMAIL_USERNAME}>`,
       to: user.email,
-      subject: `Withdrawal of $${details.amount} Approved Successfully`,
+      subject: `Deposit of $${details.amount} Rejected`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2a52be;">Withdrawal Approved</h2>
+          <h2 style="color: #c0392b;">Deposit Rejected</h2>
           <p>Dear ${user.username || 'Valued Customer'},</p>
           
-          <p>We are pleased to inform you that your withdrawal request of 
+          <p>Unfortunately, your deposit request of 
           <strong>$${details.amount}</strong> in <strong>${details.cryptoType}</strong> 
-          has been <strong>successfully approved and processed</strong>.</p>
+          was not approved.</p>
     
-          <p><strong>Withdrawal ID:</strong> ${details.depositId || details.depositId}</p>
+          <p><strong>Deposit ID:</strong> ${details.depositId}</p>
     
           ${details.adminNotes ? `
             <p><strong>Note from our team:</strong> ${details.adminNotes}</p>
           ` : ''}
     
-          <p>The funds have been sent to your designated wallet address. Depending on the blockchain network, it may take a short time for the transaction to reflect.</p>
-    
           <p>If you have any questions or require further clarification, feel free to reach out to our support team.</p>
     
           <p style="margin-top: 30px;">
-            <strong>Accilent Finance Limited</strong><br>
-            <a href="mailto:accillents@gmail.com">accillents@gmail.com</a><br>
+            <strong>Cryptaura Finance Limited</strong><br>
+            <a href="mailto:cryptaura@gmail.com">cryptaura@gmail.com</a><br>
             <em>Empowering Smart Investments</em>
           </p>
         </div>
       `,
     };
-    
-    
 
     await transporter.sendMail(mailOptions);
     console.log('Deposit rejection email sent to:', user.email);
@@ -136,11 +130,10 @@ import { processReferralBonus } from "./referral";
   }
 }
 
- 
 export async function getInvestmentPlans(): Promise<{ data?: InvestmentPlan[]; error?: string }> {
   try {
     const { data: plans, error } = await supabase
-      .from('investment_plans')
+      .from('cryptaura_investment_plans')
       .select('*')
       .order('min_amount', { ascending: true });
 
@@ -158,7 +151,10 @@ export async function getInvestmentPlans(): Promise<{ data?: InvestmentPlan[]; e
         maxAmount: plan.max_amount,
         durationDays: plan.duration_days,
         interval: plan.interval,
-        referralBonus: plan.referral_bonus
+        referralBonus: plan.referral_bonus,
+        imageUrl: plan.image_url,
+        features: plan.features,
+        isPopular: plan.is_popular
       })) || []
     };
   } catch (err) {
@@ -167,16 +163,15 @@ export async function getInvestmentPlans(): Promise<{ data?: InvestmentPlan[]; e
   }
 }
 
-
 export async function updateInvestmentPlan(input: UpdateInvestmentPlanInput): Promise<{ success: boolean; error?: string }> {
   try {
     const { id, ...updateFields } = input;
 
     const { error } = await supabase
-      .from('investment_plans')
+      .from('cryptaura_investment_plans')
       .update({
         ...updateFields,
-        updated_at: new Date().toISOString() // optional: set an updated timestamp
+        updated_at: new Date().toISOString()
       })
       .eq('id', id);
 
@@ -192,12 +187,11 @@ export async function updateInvestmentPlan(input: UpdateInvestmentPlanInput): Pr
   }
 }
 
-
 // Get all crypto payment options
 export async function getCryptoPaymentOptions(): Promise<{ data?: CryptoPaymentOption[]; error?: string }> {
   try {
     const { data: options, error } = await supabase
-      .from('crypto_payment_options')
+      .from('cryptaura_crypto_payment_options')
       .select('*')
       .eq('is_active', true);
 
@@ -241,76 +235,147 @@ export async function initiateDeposit({
     if (!session?.user) {
       console.warn('[initiateDeposit] No authenticated user found');
       if (typeof window !== 'undefined') {
-                window.location.href = '/signin';
-              } else {
-                redirect('/signin');  
-              }
+        window.location.href = '/signin';
+      } else {
+        redirect('/signin');  
+      }
       return { error: 'Not authenticated' };
     }
     console.log('[initiateDeposit] User authenticated:', session.user.id);
 
     const userId = session.user.id;
 
-    // 2. Validate amount against selected plan
+    // 2. Validate amount against selected plan - ENHANCED DEBUGGING
     console.log(`[initiateDeposit] Validating plan ${planId} and amount ${amount}...`);
+    
+    // First, let's check what plans exist for debugging
+    const { data: allPlans, error: allPlansError } = await supabase
+      .from('cryptaura_investment_plans')
+      .select('id, title, min_amount, max_amount');
+
+    if (allPlansError) {
+      console.error('[initiateDeposit] Error fetching all plans:', allPlansError);
+    } else {
+      console.log('[initiateDeposit] Available plans:', allPlans);
+    }
+
+    // Now fetch the specific plan
     const { data: plan, error: planError } = await supabase
-      .from('investment_plans')
-      .select('min_amount, max_amount')
+      .from('cryptaura_investment_plans')
+      .select('id, title, min_amount, max_amount, percentage, duration_days')
       .eq('id', planId)
       .single();
 
-    if (planError || !plan) {
-      console.error('[initiateDeposit] Plan validation failed:', planError || 'Plan not found');
-      return { error: 'Invalid investment plan' };
-    }
-    console.log('[initiateDeposit] Plan validated:', plan);
+    console.log('[initiateDeposit] Plan query result:', { plan, planError });
 
-    if (amount < plan.min_amount || amount > plan.max_amount) {
-      console.warn(`[initiateDeposit] Amount ${amount} outside plan range (${plan.min_amount}-${plan.max_amount})`);
-      return { error: `Amount must be between $${plan.min_amount} and $${plan.max_amount} for this plan` };
+    if (planError) {
+      console.error('[initiateDeposit] Plan validation failed:', planError);
+      
+      // Provide more specific error messages
+      if (planError.code === 'PGRST116') { // No rows returned
+        return { error: `Investment plan not found. Please select a valid plan. Provided planId: ${planId}` };
+      }
+      
+      return { error: `Database error: ${planError.message}` };
     }
-    console.log('[initiateDeposit] Amount validated');
+
+    if (!plan) {
+      console.error('[initiateDeposit] Plan not found for ID:', planId);
+      return { error: `Investment plan not found. Please select a valid plan.` };
+    }
+
+    console.log('[initiateDeposit] Plan validated:', {
+      id: plan.id,
+      title: plan.title,
+      min_amount: plan.min_amount,
+      max_amount: plan.max_amount,
+      amount_provided: amount
+    });
+
+    // Validate amount range
+    if (amount < plan.min_amount) {
+      console.warn(`[initiateDeposit] Amount ${amount} below minimum ${plan.min_amount}`);
+      return { error: `Amount must be at least $${plan.min_amount} for the ${plan.title}` };
+    }
+
+    if (amount > plan.max_amount) {
+      console.warn(`[initiateDeposit] Amount ${amount} above maximum ${plan.max_amount}`);
+      return { error: `Amount cannot exceed $${plan.max_amount} for the ${plan.title}` };
+    }
+
+    console.log('[initiateDeposit] Amount validated successfully');
 
     // 3. Get wallet address for selected crypto
     console.log(`[initiateDeposit] Getting wallet address for ${cryptoType}...`);
+    
+    // First, check available crypto options for debugging
+    const { data: allCryptoOptions, error: allCryptoError } = await supabase
+      .from('cryptaura_crypto_payment_options')
+      .select('symbol, name, wallet_address');
+
+    if (allCryptoError) {
+      console.error('[initiateDeposit] Error fetching all crypto options:', allCryptoError);
+    } else {
+      console.log('[initiateDeposit] Available crypto options:', allCryptoOptions);
+    }
+
     const { data: cryptoOption, error: cryptoError } = await supabase
-      .from('crypto_payment_options')
-      .select('wallet_address')
-      .eq('symbol', cryptoType)
+      .from('cryptaura_crypto_payment_options')
+      .select('wallet_address, name, symbol')
+      .eq('symbol', cryptoType.toUpperCase()) // Ensure case matching
+      .eq('is_active', true)
       .single();
 
     if (cryptoError || !cryptoOption) {
       console.error('[initiateDeposit] Crypto validation failed:', cryptoError || 'Crypto option not found');
-      return { error: 'Invalid cryptocurrency selected' };
+      
+      if (cryptoError?.code === 'PGRST116') {
+        return { error: `Cryptocurrency ${cryptoType} is not supported. Please select a valid payment method.` };
+      }
+      
+      return { error: `Invalid cryptocurrency selected: ${cryptoError?.message || 'Not found'}` };
     }
-    console.log('[initiateDeposit] Wallet address retrieved');
+
+    console.log('[initiateDeposit] Wallet address retrieved for:', cryptoOption.name);
 
     // 4. Generate reference
     const reference = `DEP-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    const narration = `Investment deposit for plan ${planId}`;
+    const narration = `Investment deposit for ${plan.title}`;
     console.log('[initiateDeposit] Generated reference:', reference);
 
     // 5. Create deposit record
     console.log('[initiateDeposit] Creating deposit record...');
     const { data: deposit, error: depositError } = await supabase
-      .from('deposits')
+      .from('cryptaura_deposits')
       .insert([{
         user_id: userId,
         plan_id: planId,
         amount,
-        crypto_type: cryptoType,
+        crypto_type: cryptoType.toUpperCase(),
         wallet_address: cryptoOption.wallet_address,
         transaction_hash: transactionHash,
         reference,
-        narration
+        narration,
+        status: 'pending'
       }])
       .select()
       .single();
 
     if (depositError || !deposit) {
       console.error('[initiateDeposit] Deposit creation failed:', depositError);
-      return { error: 'Failed to initiate deposit' };
+      
+      // Provide more specific error messages
+      if (depositError?.code === '23503') { // Foreign key violation
+        return { error: 'Invalid user or plan reference. Please try again.' };
+      }
+      
+      if (depositError?.code === '23505') { // Unique violation
+        return { error: 'Duplicate transaction detected. Please use a different transaction hash.' };
+      }
+      
+      return { error: `Failed to initiate deposit: ${depositError?.message || 'Unknown error'}` };
     }
+
     console.log('[initiateDeposit] Deposit created successfully:', deposit.id);
 
     // 6. Notify admin
@@ -332,7 +397,7 @@ export async function initiateDeposit({
     return { success: true, depositId: deposit.id };
   } catch (err) {
     console.error('[initiateDeposit] Unexpected error:', err);
-    return { error: 'An unexpected error occurred' };
+    return { error: 'An unexpected error occurred during deposit initiation' };
   }
 }
 
@@ -340,7 +405,7 @@ async function sendDepositNotificationToAdmin(params: {
   userId: string;
   userEmail: string;
   amount: number;
-  planId: number;
+  planId: string;
   cryptoType: string;
   reference: string;
   depositId: string;
@@ -361,13 +426,13 @@ async function sendDepositNotificationToAdmin(params: {
     // Get plan title for email
     console.log('[sendDepositNotificationToAdmin] Fetching plan details...');
     const { data: plan } = await supabase
-      .from('investment_plans')
+      .from('cryptaura_investment_plans')
       .select('title')
       .eq('id', params.planId)
       .single();
 
     const mailOptions = {
-      from: `Your App Name <${process.env.EMAIL_USERNAME}>`,
+      from: `Cryptaura <${process.env.EMAIL_USERNAME}>`,
       to: process.env.ADMIN_EMAIL,
       subject: `New Deposit Request - ${params.amount} ${params.cryptoType}`,
       html: `
@@ -403,12 +468,13 @@ async function sendDepositNotificationToAdmin(params: {
     console.error('[sendDepositNotificationToAdmin] Failed to send email:', error);
   }
 }
+
 // Approve a deposit
 export async function approveDeposit(depositId: string): Promise<{ success?: boolean; error?: string; currentStatus?: string }> {
   try {
     // 1. Verify deposit exists and is pending
     const { data: deposit, error: fetchError } = await supabase
-      .from('deposits')
+      .from('cryptaura_deposits')
       .select('status, user_id, amount, plan_id, crypto_type')
       .eq('id', depositId)
       .single();
@@ -425,18 +491,37 @@ export async function approveDeposit(depositId: string): Promise<{ success?: boo
       };
     }
 
-    // 2. Process referral bonus if this is the user's first deposit
+    // 2. Update user balance FIRST
+    console.log(`[approveDeposit] Updating balance for user ${deposit.user_id} with amount ${deposit.amount}`);
+    
+    const { error: balanceError } = await supabase.rpc('cryptaura_increment_balance', {
+      user_id: deposit.user_id,
+      amount: deposit.amount
+    });
+
+    if (balanceError) {
+      console.error('Balance update failed:', balanceError);
+      return { error: 'Failed to update user balance' };
+    }
+
+    console.log(`[approveDeposit] Successfully updated user balance`);
+
+    // 3. Process referral bonus
     if (deposit.amount > 0) {
+      console.log(`[approveDeposit] Processing referral bonus for user ${deposit.user_id}`);
       const { error: referralError } = await processReferralBonus(deposit.user_id, deposit.amount);
       if (referralError) {
         console.error('Referral bonus processing failed:', referralError);
         // Continue with deposit approval even if referral bonus fails
+      } else {
+        console.log(`[approveDeposit] Referral bonus processed successfully`);
       }
     }
 
-    // 3. Update status to completed (trigger will handle balance update)
+    // 4. Update deposit status to completed
+    console.log(`[approveDeposit] Updating deposit status to completed`);
     const { error: updateError } = await supabase
-      .from('deposits')
+      .from('cryptaura_deposits')
       .update({ 
         status: 'completed',
         processed_at: new Date().toISOString()
@@ -444,17 +529,28 @@ export async function approveDeposit(depositId: string): Promise<{ success?: boo
       .eq('id', depositId);
 
     if (updateError) {
-      console.error('Approval failed:', updateError);
+      console.error('Deposit status update failed:', updateError);
+      
+      // Rollback balance update if deposit status update fails
+      await supabase.rpc('cryptaura_decrement_balance', {
+        user_id: deposit.user_id,
+        amount: deposit.amount
+      });
+      
       return { error: 'Failed to approve deposit' };
     }
 
-    // 4. Send confirmation to user
+    console.log(`[approveDeposit] Deposit status updated successfully`);
+
+    // 5. Send confirmation to user
+    console.log(`[approveDeposit] Sending approval email`);
     await sendDepositApprovalEmail(deposit.user_id, {
       amount: deposit.amount,
       depositId,
       cryptoType: deposit.crypto_type
     });
 
+    console.log(`[approveDeposit] Deposit approval completed successfully`);
     return { success: true };
   } catch (err) {
     console.error('Unexpected error in approveDeposit:', err);
@@ -462,13 +558,12 @@ export async function approveDeposit(depositId: string): Promise<{ success?: boo
   }
 }
 
-
 // Reject a deposit
 export async function rejectDeposit(depositId: string, adminNotes: string = ''): Promise<{ success?: boolean; error?: string; currentStatus?: string }> {
   try {
     // 1. Verify deposit exists and is pending
     const { data: deposit, error: fetchError } = await supabase
-      .from('deposits')
+      .from('cryptaura_deposits')
       .select('status, user_id, amount, plan_id, crypto_type')
       .eq('id', depositId)
       .single();
@@ -487,7 +582,7 @@ export async function rejectDeposit(depositId: string, adminNotes: string = ''):
 
     // 2. Update status to rejected
     const { error: updateError } = await supabase
-      .from('deposits')
+      .from('cryptaura_deposits')
       .update({ 
         status: 'rejected',
         processed_at: new Date().toISOString(),
@@ -530,7 +625,7 @@ export async function getUserDeposits(
       if (typeof window !== 'undefined') {
         window.location.href = '/signin';
       } else {
-        redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+        redirect('/signin');
       }
       return { error: 'Not authenticated' };
     }
@@ -539,7 +634,7 @@ export async function getUserDeposits(
 
     // 2. Build base query
     let query = supabase
-      .from('deposits')
+      .from('cryptaura_deposits')
       .select(`
         id,
         amount,
@@ -549,7 +644,7 @@ export async function getUserDeposits(
         created_at,
         processed_at,
         transaction_hash,
-        investment_plans!inner(title)
+        cryptaura_investment_plans!inner(title)
       `, { count: 'exact' })
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
@@ -585,7 +680,7 @@ export async function getUserDeposits(
             createdAt: deposit.created_at,
             processedAt: deposit.processed_at,
             transactionHash: deposit.transaction_hash,
-            planTitle: deposit.investment_plans[0]?.title 
+            planTitle: deposit.cryptaura_investment_plans[0]?.title 
           })),
       count: count || 0
     };
@@ -595,12 +690,11 @@ export async function getUserDeposits(
   }
 }
 
-
 export async function getAllDepositss(): Promise<{ data?: Deposit[]; error?: string }> {
   try {
     // Execute simple query to get all deposits
     const { data, error } = await supabase
-      .from('deposits')  // Changed from 'getAllDeposits' to 'deposits'
+      .from('cryptaura_deposits')
       .select(`
         id,
         amount,
@@ -638,6 +732,7 @@ export async function getAllDepositss(): Promise<{ data?: Deposit[]; error?: str
     return { error: 'An unexpected error occurred' };
   }
 }
+
 // Get all deposits (admin)
 export async function getAllDeposits(
   filters: {
@@ -650,7 +745,7 @@ export async function getAllDeposits(
   try {
     // 1. Build base query
     let query = supabase
-      .from('deposits')
+      .from('cryptaura_deposits')
       .select(`
         id,
         amount,
@@ -661,8 +756,8 @@ export async function getAllDeposits(
         processed_at,
         transaction_hash,
         admin_notes,
-        investment_plans!inner(title),
-        accilent_profile!inner(email, username)
+        cryptaura_investment_plans!inner(title),
+        cryptaura_profile!inner(email, username)
       `, { count: 'exact' })
       .order('created_at', { ascending: false });
 
@@ -702,9 +797,9 @@ export async function getAllDeposits(
             processedAt: deposit.processed_at,
             transactionHash: deposit.transaction_hash,
             adminNotes: deposit.admin_notes,
-            planTitle: deposit.investment_plans[0]?.title, // Access first element of array
-            userEmail: deposit.accilent_profile[0]?.email, // Access first element of array
-            username: deposit.accilent_profile[0]?.username // Access first element of array
+            planTitle: deposit.cryptaura_investment_plans[0]?.title,
+            userEmail: deposit.cryptaura_profile[0]?.email,
+            username: deposit.cryptaura_profile[0]?.username
           })),
       count: count || 0
     };
@@ -713,5 +808,3 @@ export async function getAllDeposits(
     return { error: 'An unexpected error occurred' };
   }
 }
-
- 

@@ -1,6 +1,5 @@
 'use client'
 
- 
 import { advantages } from "@/types/advantages"
 import { motion } from "framer-motion"
 import Image from "next/image"
@@ -23,7 +22,7 @@ export default function OurAdvantage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          Empowering Business The Excellence
+          Empowering Investments Through Excellence
         </motion.h3>
       </div>
 
@@ -38,16 +37,16 @@ export default function OurAdvantage() {
             viewport={{ once: true }}
           >
             <div className="h-56 w-full overflow-hidden">
-  <Image
-    src={adv.image}
-    alt={adv.title}
-    width={1200}          // pick any large logical width
-    height={448}          // keep the same aspect‑ratio you need
-    className="h-full w-full object-cover"  // makes it fill the wrapper
-    sizes="(max-width: 768px) 100vw, 50vw"  // responsive optimisation (optional)
-    priority              // keep if this image is LCP‑critical
-  />
-</div>
+              <Image
+                src={adv.image}
+                alt={adv.title}
+                width={1200}          // pick any large logical width
+                height={448}          // keep the same aspect‑ratio you need
+                className="h-full w-full object-cover"  // makes it fill the wrapper
+                sizes="(max-width: 768px) 100vw, 50vw"  // responsive optimisation (optional)
+                priority              // keep if this image is LCP‑critical
+              />
+            </div>
 
             <div className="p-6">
               <h4 className="text-xl font-semibold text-gray-800 mb-2">{adv.title}</h4>

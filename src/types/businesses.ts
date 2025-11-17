@@ -34,17 +34,17 @@ export const businesses = [
 
 
 
-export  type CryptoType = 'BTC' | 'ETH' | 'BNB' | 'DOGE' | 'SOL' | 'USDT';
+export type CryptoType = 'BTC' | 'ETH' | 'BNB' | 'DOGE' | 'SOL' | 'USDT' | 'XRP' | 'LTC' | string;
 
 export type DepositInput = {
-  planId: number;
+  planId: string;
   amount: number;
-  cryptoType: CryptoType;
+  cryptoType: string;
   transactionHash?: string;
 };
 
 export  type InvestmentPlan = {
-  id: number;
+  id: string;
   title: string;
   percentage: number;
   minAmount: number;
@@ -116,7 +116,7 @@ export type ProfileData = {
 };
 
 export type UpdateInvestmentPlanInput = {
-  id: number;
+  id: string;
   title?: string;
   percentage?: number;
   min_amount?: number;

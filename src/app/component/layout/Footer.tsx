@@ -8,83 +8,158 @@ import {
   FaPhoneAlt,
   FaEnvelope,
   FaMapMarkerAlt,
+  FaShieldAlt,
+  FaChartLine,
+  FaGlobe,
 } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#003322] text-white pt-16 pb-8 px-6 md:px-12 relative">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 border-b border-white/10 pb-10">
-        {/* Logo & Description */}
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold text-lime-500">Accilent</h2>
-          <p className="text-sm leading-relaxed text-gray-200">
-            We are an international financial company engaged in investment
-            activities, which are related to trading on financial markets and
-            cryptocurrency exchanges performed by qualified professional
-            traders. Alpha Capital Limited is registered and located at 27
-            Frankley Road, New Plymouth Central, New Zealand.
-          </p>
+    <footer className="bg-gradient-to-b from-gray-900 to-[#001a14] text-white pt-20 pb-8 px-6 md:px-12 relative">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-teal-500 to-emerald-500 mix-blend-overlay"></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 border-b border-white/10 pb-12">
+          {/* Company Info */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-teal-600 rounded-lg p-2">
+                <FaChartLine className="text-white text-xl" />
+              </div>
+              <h2 className="text-3xl font-bold text-white">
+                CRYPTAURA<span className="text-teal-400">INVESTSPHERE</span>
+              </h2>
+            </div>
+            <p className="text-gray-300 leading-relaxed max-w-2xl">
+              CRYPTAURA INVESTSPHERE COMPANY is a premier international investment firm 
+              specializing in strategic portfolio management across financial markets, 
+              cryptocurrency exchanges, and emerging digital assets. Our team of qualified 
+              professional traders and analysts delivers exceptional returns through 
+              sophisticated investment strategies and risk-managed approaches.
+            </p>
 
-          {/* Socials */}
-          <div className="flex space-x-4 pt-4">
-            <a href="#" className="p-2 rounded-full bg-[#00271D] hover:bg-lime-500 hover:text-black transition">
-              <FaInstagram size={18} />
-            </a>
-            <a href="#" className="p-2 rounded-full bg-[#00271D] hover:bg-lime-500 hover:text-black transition">
-              <FaLinkedinIn size={18} />
-            </a>
-            <a href="#" className="p-2 rounded-full bg-[#00271D] hover:bg-lime-500 hover:text-black transition">
-              <FaTwitter size={18} />
-            </a>
-            <a href="#" className="p-2 rounded-full bg-[#00271D] hover:bg-lime-500 hover:text-black transition">
-              <FaFacebookF size={18} />
-            </a>
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap gap-6 pt-4">
+              <div className="flex items-center gap-2 text-sm text-gray-300">
+                <FaShieldAlt className="text-teal-400" />
+                <span>Secure & Regulated</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-300">
+                <FaGlobe className="text-teal-400" />
+                <span>Global Operations</span>
+              </div>
+            </div>
+
+            {/* Social Media */}
+            <div className="flex space-x-3 pt-6">
+              <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-teal-600 hover:scale-110 transition-all duration-300 group">
+                <FaLinkedinIn size={18} className="group-hover:text-white" />
+              </a>
+              <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-pink-600 hover:scale-110 transition-all duration-300 group">
+                <FaInstagram size={18} className="group-hover:text-white" />
+              </a>
+              <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-blue-500 hover:scale-110 transition-all duration-300 group">
+                <FaTwitter size={18} className="group-hover:text-white" />
+              </a>
+              <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-blue-800 hover:scale-110 transition-all duration-300 group">
+                <FaFacebookF size={18} className="group-hover:text-white" />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="space-y-6">
+            <h4 className="text-lg font-semibold text-white border-l-4 border-teal-500 pl-3">
+              Investment Plans
+            </h4>
+            <ul className="space-y-3 text-gray-300">
+              <li><a href="#" className="hover:text-teal-400 transition-colors flex items-center gap-2">
+                <span className="w-1 h-1 bg-teal-400 rounded-full"></span>
+                Starter Plan
+              </a></li>
+              <li><a href="#" className="hover:text-teal-400 transition-colors flex items-center gap-2">
+                <span className="w-1 h-1 bg-teal-400 rounded-full"></span>
+                Investors Plan
+              </a></li>
+              <li><a href="#" className="hover:text-teal-400 transition-colors flex items-center gap-2">
+                <span className="w-1 h-1 bg-teal-400 rounded-full"></span>
+                Standard Plan
+              </a></li>
+              <li><a href="#" className="hover:text-teal-400 transition-colors flex items-center gap-2">
+                <span className="w-1 h-1 bg-teal-400 rounded-full"></span>
+                Executive Plan
+              </a></li>
+            </ul>
+          </div>
+
+          {/* Contact Information */}
+          <div className="space-y-6">
+            <h4 className="text-lg font-semibold text-white border-l-4 border-teal-500 pl-3">
+              Contact Us
+            </h4>
+            <ul className="space-y-4 text-gray-300">
+              <li className="flex items-start gap-3 group">
+                <div className="bg-teal-500/20 rounded-lg p-2 group-hover:bg-teal-500 transition-colors">
+                  <FaPhoneAlt className="text-teal-400 group-hover:text-white" size={16} />
+                </div>
+                <div>
+                  <span className="text-sm text-gray-400">Phone</span>
+                  <p className="font-medium">+1 (555) 123-4567</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3 group">
+                <div className="bg-teal-500/20 rounded-lg p-2 group-hover:bg-teal-500 transition-colors">
+                  <FaEnvelope className="text-teal-400 group-hover:text-white" size={16} />
+                </div>
+                <div>
+                  <span className="text-sm text-gray-400">Email</span>
+                  <p className="font-medium">invest@cryptaura-investsphere.com</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3 group">
+                <div className="bg-teal-500/20 rounded-lg p-2 group-hover:bg-teal-500 transition-colors">
+                  <FaMapMarkerAlt className="text-teal-400 group-hover:text-white" size={16} />
+                </div>
+                <div>
+                  <span className="text-sm text-gray-400">Headquarters</span>
+                  <p className="font-medium">
+                    27 Frankley Road<br />
+                    New Plymouth Central<br />
+                    New Zealand
+                  </p>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Useful Links */}
-        <div className="space-y-4">
-          <h4 className="text-lg font-semibold text-white">Useful Links</h4>
-          <ul className="space-y-2 text-sm text-gray-300">
-            <li><a href="#">Software Corner</a></li>
-            <li><a href="#">Application Center</a></li>
-            <li><a href="#">Research Section</a></li>
-            <li><a href="#">Developing Corner</a></li>
-          </ul>
+        {/* Bottom Bar */}
+        <div className="pt-8 flex flex-col lg:flex-row items-center justify-between gap-4 text-sm">
+          <div className="text-gray-400">
+            <p>© 2024 CRYPTAURA INVESTSPHERE COMPANY | All Rights Reserved</p>
+            <p className="text-xs mt-1">Registered and regulated financial services provider</p>
+          </div>
+          
+          <div className="flex flex-wrap gap-6 text-gray-400">
+            <a href="#" className="hover:text-teal-400 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-teal-400 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-teal-400 transition-colors">Risk Disclosure</a>
+            <a href="#" className="hover:text-teal-400 transition-colors">Compliance</a>
+            <a href="#" className="hover:text-teal-400 transition-colors">Support</a>
+          </div>
         </div>
 
-        {/* Contact */}
-        <div className="space-y-4">
-          <h4 className="text-lg font-semibold text-white">Contact</h4>
-          <ul className="space-y-4 text-sm text-gray-300">
-            <li className="flex items-center gap-2">
-              <FaPhoneAlt className="text-lime-400" />
-              <span>+447552536736</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <FaEnvelope className="text-lime-400" />
-              <span>Accilents@gmail.com</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <FaMapMarkerAlt className="text-lime-400 mt-1" />
-              <span>
-                27 Frankley Road<br />
-                New Plymouth Central,<br />
-                New Zealand
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="text-xs text-gray-400 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p>© Accilent Finance Limited 2020 | All Rights Reserved</p>
-        <div className="flex gap-6">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Sitemap</a>
-          <a href="#">Help</a>
+        {/* Regulatory Notice */}
+        <div className="mt-6 pt-6 border-t border-white/5">
+          <p className="text-xs text-gray-500 text-center">
+            CRYPTAURA INVESTSPHERE COMPANY is a registered financial services provider. 
+            Investments are subject to market risk. Please read our risk disclosure 
+            before investing. Past performance is not indicative of future results.
+          </p>
         </div>
       </div>
     </footer>

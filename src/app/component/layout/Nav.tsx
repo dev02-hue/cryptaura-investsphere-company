@@ -57,9 +57,9 @@ export default function Navigation() {
               whileHover={{ scale: 1.05 }}
               className="flex items-center"
             >
-              <span className="text-3xl font-bold text-teal-600">A</span>
-              <span className="text-2xl font-bold text-gray-800 ml-1">ccilent</span>
-              <span className="text-xs font-medium bg-teal-100 text-teal-800 px-2 py-1 rounded-full ml-2">PRO</span>
+              <span className="text-3xl font-bold text-teal-600">C</span>
+              <span className="text-xl font-bold text-gray-800 ml-1">RYPTAURA</span>
+              <span className="text-xs font-medium bg-teal-100 text-teal-800 px-2 py-1 rounded-full ml-2">INVESTSPHERE</span>
             </motion.div>
           </Link>
 
@@ -192,7 +192,7 @@ export default function Navigation() {
                 {/* Header */}
                 <div className="flex justify-between items-center p-6 border-b">
                   <Link href="/" className="text-xl font-bold text-teal-600">
-                    Accilent
+                    CRYPTAURA INVESTSPHERE
                   </Link>
                   <button onClick={toggleMenu}>
                     <HiX className="text-2xl text-gray-500" />

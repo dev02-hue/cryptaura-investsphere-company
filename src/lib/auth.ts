@@ -50,7 +50,7 @@ export async function signUp({
   phoneNumber,
   password,
   confirmPassword,
-  referralCode, // Added referral code parameter
+  referralCode,
 }: SignUpInput) {
   try {
     // 1. Validate input
@@ -63,7 +63,7 @@ export async function signUp({
 
     // 2. Check if username, email or phone already exists
     const { data: existingUser, error: lookupError } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('username, email, phone_number, referral_code')
       .or(`username.eq.${username},email.eq.${email},phone_number.eq.${phoneNumber}`)
 
@@ -88,7 +88,7 @@ export async function signUp({
     let referredByUserId: string | null = null;
     if (referralCode) {
       const { data: referrerData, error: referrerError } = await supabase
-        .from('accilent_profile')
+        .from('cryptaura_profile')
         .select('id')
         .eq('referral_code', referralCode)
         .single();
@@ -109,7 +109,7 @@ export async function signUp({
     while (!isCodeUnique && attempts < maxAttempts) {
       attempts++;
       const { data: existingCode } = await supabase
-        .from('accilent_profile')
+        .from('cryptaura_profile')
         .select('referral_code')
         .eq('referral_code', referralCodeForNewUser)
         .single();
@@ -148,7 +148,7 @@ export async function signUp({
 
     // 5. Create user profile with referral data
     const now = new Date().toISOString()
-    const { error: profileError } = await supabase.from('accilent_profile').insert([{
+    const { error: profileError } = await supabase.from('cryptaura_profile').insert([{
       id: userId,
       name,
       username,
@@ -166,10 +166,9 @@ export async function signUp({
     }
 
     // 6. Update referrer's stats if applicable
-    // 6. If this user was referred, process the referral bonus
     if (referredByUserId) {
       // First update referrer's stats
-      await supabase.rpc('increment_referral_count', {
+      await supabase.rpc('cryptaura_increment_referral_count', {
         user_id: referredByUserId
       }).then(({ error }) => {
         if (error) {
@@ -177,8 +176,8 @@ export async function signUp({
         }
       });
 
-      // Process signup bonus (if you want to award for signup, not deposit)
-      const SIGNUP_BONUS_AMOUNT = 5; // Example: $10 bonus for referred signup
+      // Process signup bonus
+      const SIGNUP_BONUS_AMOUNT = 5;
       const bonusResult = await processReferralBonus(userId, SIGNUP_BONUS_AMOUNT);
       
       if (bonusResult.error) {
@@ -199,10 +198,10 @@ export async function signUp({
       const mailOptions = {
         from: process.env.EMAIL_FROM,
         to: email,
-        subject: 'Welcome to Accilent - Confirm Your Email',
+        subject: 'Welcome to Cryptaura - Confirm Your Email',
         html: `
           <p>Hello ${name},</p>
-          <p>Thank you for registering with Accilent!</p>
+          <p>Thank you for registering with Cryptaura!</p>
           <p>Your username: <strong>${username}</strong></p>
           <p>Your unique referral code: <strong>${referralCodeForNewUser}</strong></p>
           <p>Share this code with friends to earn rewards!</p>
@@ -246,7 +245,7 @@ export async function signIn({ emailOrUsername, password }: SignInInput) {
     if (!isEmail) {
       // Lookup email by username
       const { data: profile, error: profileError } = await supabase
-        .from('accilent_profile')
+        .from('cryptaura_profile')
         .select('email')
         .eq('username', emailOrUsername)
         .single()
@@ -308,7 +307,7 @@ export async function signIn({ emailOrUsername, password }: SignInInput) {
 
     // Get username to store in cookie
     const { data: userProfile } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('username')
       .eq('id', userId)
       .single()
@@ -343,7 +342,7 @@ export async function resetPassword({ email }: ResetPasswordInput) {
 
     // 2. Find user by email
     const { data: user, error: userError } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('id, name')
       .eq('email', email)
       .single()
@@ -358,7 +357,7 @@ export async function resetPassword({ email }: ResetPasswordInput) {
 
     // 4. Store token in database
     const { error: tokenError } = await supabase
-      .from('password_reset_tokens')
+      .from('cryptaura_password_reset_tokens')
       .insert({
         user_id: user.id,
         token,
@@ -385,10 +384,10 @@ export async function resetPassword({ email }: ResetPasswordInput) {
       const mailOptions = {
         from: process.env.EMAIL_FROM,
         to: email,
-        subject: 'Accilent - Password Reset Request',
+        subject: 'Cryptaura - Password Reset Request',
         html: `
           <p>Hello ${user.name},</p>
-          <p>We received a request to reset your Accilent account password.</p>
+          <p>We received a request to reset your Cryptaura account password.</p>
           <p>Click the link below to reset your password:</p>
           <p><a href="${resetLink}">Reset Password</a></p>
           <p>This link will expire in 1 hour.</p>
@@ -431,7 +430,7 @@ export async function confirmResetPassword({
 
     // 2. Verify token
     const { data: tokenRecord, error: tokenError } = await supabase
-      .from('password_reset_tokens')
+      .from('cryptaura_password_reset_tokens')
       .select('*')
       .eq('token', token)
       .gt('expires_at', new Date().toISOString())
@@ -460,7 +459,7 @@ export async function confirmResetPassword({
 
     // 4. Mark token as used
     await supabase
-      .from('password_reset_tokens')
+      .from('cryptaura_password_reset_tokens')
       .update({ used: true })
       .eq('id', tokenRecord.id)
 
@@ -510,7 +509,7 @@ export async function getSession() {
       if (typeof window !== 'undefined') {
                 window.location.href = '/signin';
               } else {
-                redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+                redirect('/signin');
               }
       return { session: null, user: null }
     }

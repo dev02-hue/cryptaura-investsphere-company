@@ -31,7 +31,6 @@ export interface Loan {
   dueDate?: string;
   interestAmount: number;
   totalRepaymentAmount: number;
-  // repaymentSchedule: RepaymentSchedule[];
   adminNotes?: string;
   planTitle?: string;
   userEmail?: string;
@@ -91,7 +90,7 @@ async function sendLoanApprovalEmail(userId: string, details: {
 }) {
   try {
     const { data: user, error } = await supabase
-      .from('profiles')
+      .from('cryptaura_profile')
       .select('email, username')
       .eq('id', userId)
       .single();
@@ -110,7 +109,7 @@ async function sendLoanApprovalEmail(userId: string, details: {
     });
 
     const mailOptions = {
-      from: `Accilent Finance Limited <${process.env.EMAIL_USERNAME}>`,
+      from: `Cryptaura Finance Limited <${process.env.EMAIL_USERNAME}>`,
       to: user.email,
       subject: `Loan of $${details.amount} Approved`,
       html: `
@@ -130,8 +129,8 @@ async function sendLoanApprovalEmail(userId: string, details: {
           <p>Please ensure you make your repayments on time to avoid penalties.</p>
     
           <p style="margin-top: 30px;">
-            <strong>Accilent Finance Limited</strong><br>
-            <a href="mailto:accillents@gmail.com">accillents@gmail.com</a><br>
+            <strong>Cryptaura Finance Limited</strong><br>
+            <a href="mailto:cryptaura@gmail.com">cryptaura@gmail.com</a><br>
             <em>Empowering Your Financial Growth</em>
           </p>
         </div>
@@ -152,7 +151,7 @@ async function sendLoanRejectionEmail(userId: string, details: {
 }) {
   try {
     const { data: user, error } = await supabase
-      .from('profiles')
+      .from('cryptaura_profile')
       .select('email, username')
       .eq('id', userId)
       .single();
@@ -171,7 +170,7 @@ async function sendLoanRejectionEmail(userId: string, details: {
     });
 
     const mailOptions = {
-      from: `Accilent Finance Limited <${process.env.EMAIL_USERNAME}>`,
+      from: `Cryptaura Finance Limited <${process.env.EMAIL_USERNAME}>`,
       to: user.email,
       subject: `Loan Request of $${details.amount} Declined`,
       html: `
@@ -192,8 +191,8 @@ async function sendLoanRejectionEmail(userId: string, details: {
           please don't hesitate to contact our support team.</p>
     
           <p style="margin-top: 30px;">
-            <strong>Accilent Finance Limited</strong><br>
-            <a href="mailto:accillents@gmail.com">accillents@gmail.com</a><br>
+            <strong>Cryptaura Finance Limited</strong><br>
+            <a href="mailto:cryptaura@gmail.com">cryptaura@gmail.com</a><br>
             <em>Empowering Your Financial Growth</em>
           </p>
         </div>
@@ -227,7 +226,7 @@ async function sendLoanNotificationToAdmin(params: {
     const plan = loanPlans.find(p => p.id === params.planId);
 
     const mailOptions = {
-      from: `Accilent Finance Limited <${process.env.EMAIL_USERNAME}>`,
+      from: `Cryptaura Finance Limited <${process.env.EMAIL_USERNAME}>`,
       to: process.env.ADMIN_EMAIL,
       subject: `New Loan Request - $${params.amount}`,
       html: `
@@ -322,8 +321,6 @@ export async function getLoanPlans(): Promise<{ data?: LoanPlan[]; error?: strin
   }
 }
 
-
-
 export async function initiateLoan(input: LoanInput): Promise<{ success?: boolean; error?: string; loanId?: string }> {
   try {
     const session = await getSession();
@@ -351,22 +348,20 @@ export async function initiateLoan(input: LoanInput): Promise<{ success?: boolea
     const totalRepaymentAmount = input.amount + interestAmount;
 
     const { data: loan, error: loanError } = await supabase
-    .from('loans')
-    .insert([{
-      user_id: userId,
-      plan_id: input.planId,
-      amount: input.amount,
-      status: 'pending',
-      reference,
-      purpose: input.purpose,
-      interest_amount: interestAmount,
-      total_repayment: totalRepaymentAmount,
-      total_repayment_amount: totalRepaymentAmount,
-      interest_rate: plan.interest 
-    }])
-    .select()
-    .single();
-  
+      .from('cryptaura_loans')
+      .insert([{
+        user_id: userId,
+        plan_id: input.planId,
+        amount: input.amount,
+        status: 'pending',
+        reference,
+        purpose: input.purpose,
+        interest_amount: interestAmount,
+        total_repayment_amount: totalRepaymentAmount,
+        interest_rate: plan.interest 
+      }])
+      .select()
+      .single();
 
     if (loanError || !loan) {
       console.error('Loan creation failed:', loanError);
@@ -392,7 +387,7 @@ export async function initiateLoan(input: LoanInput): Promise<{ success?: boolea
 export async function approveLoan(loanId: string): Promise<{ success?: boolean; error?: string; currentStatus?: string }> {
   try {
     const { data: loan, error: fetchError } = await supabase
-      .from('loans')
+      .from('cryptaura_loans')
       .select('status, user_id, amount, plan_id, interest_amount, total_repayment_amount')
       .eq('id', loanId)
       .single();
@@ -421,7 +416,7 @@ export async function approveLoan(loanId: string): Promise<{ success?: boolean; 
     const repaymentSchedule = calculateRepaymentSchedule(plan, loan.amount, approvalDate);
 
     const { error: updateError } = await supabase
-      .from('loans')
+      .from('cryptaura_loans')
       .update({ 
         status: 'approved',
         approved_at: approvalDate.toISOString(),
@@ -435,7 +430,7 @@ export async function approveLoan(loanId: string): Promise<{ success?: boolean; 
       return { error: 'Failed to approve loan' };
     }
 
-    const { error: balanceError } = await supabase.rpc('increment_balance', {
+    const { error: balanceError } = await supabase.rpc('cryptaura_increment_balance', {
       user_id: loan.user_id,
       amount: loan.amount
     });
@@ -462,7 +457,7 @@ export async function approveLoan(loanId: string): Promise<{ success?: boolean; 
 export async function rejectLoan(loanId: string, adminNotes: string = ''): Promise<{ success?: boolean; error?: string; currentStatus?: string }> {
   try {
     const { data: loan, error: fetchError } = await supabase
-      .from('loans')
+      .from('cryptaura_loans')
       .select('status, user_id, amount')
       .eq('id', loanId)
       .single();
@@ -480,10 +475,10 @@ export async function rejectLoan(loanId: string, adminNotes: string = ''): Promi
     }
 
     const { error: updateError } = await supabase
-      .from('loans')
+      .from('cryptaura_loans')
       .update({ 
         status: 'rejected',
-        processed_at: new Date().toISOString(),
+        approved_at: new Date().toISOString(),
         admin_notes: adminNotes
       })
       .eq('id', loanId);
@@ -527,7 +522,7 @@ export async function getUserLoans(
     const userId = session.user.id;
 
     let query = supabase
-      .from('loans')
+      .from('cryptaura_loans')
       .select(`
         id,
         user_id,
@@ -542,8 +537,7 @@ export async function getUserLoans(
         total_repayment_amount,
         repayment_schedule,
         admin_notes,
-        purpose,
-        loan_plans:plan_id (title)
+        purpose
       `, { count: 'exact' })
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
@@ -567,23 +561,26 @@ export async function getUserLoans(
       return { error: 'Failed to fetch loans' };
     }
 
-    const mappedData = data?.map(loan => ({
-      id: loan.id,
-      userId: loan.user_id,
-      planId: loan.plan_id,
-      amount: loan.amount,
-      status: loan.status,
-      reference: loan.reference,
-      createdAt: loan.created_at,
-      approvedAt: loan.approved_at,
-      dueDate: loan.due_date,
-      interestAmount: loan.interest_amount,
-      totalRepaymentAmount: loan.total_repayment_amount,
-      repaymentSchedule: loan.repayment_schedule || [],
-      adminNotes: loan.admin_notes,
-      purpose: loan.purpose,
-      planTitle: (loan.loan_plans as unknown as { title: string })?.title,
-    })) || [];
+    const mappedData = data?.map(loan => {
+      const plan = loanPlans.find(p => p.id === loan.plan_id);
+      return {
+        id: loan.id,
+        userId: loan.user_id,
+        planId: loan.plan_id,
+        amount: loan.amount,
+        status: loan.status,
+        reference: loan.reference,
+        createdAt: loan.created_at,
+        approvedAt: loan.approved_at,
+        dueDate: loan.due_date,
+        interestAmount: loan.interest_amount,
+        totalRepaymentAmount: loan.total_repayment_amount,
+        repaymentSchedule: loan.repayment_schedule || [],
+        adminNotes: loan.admin_notes,
+        purpose: loan.purpose,
+        planTitle: plan?.title,
+      };
+    }) || [];
 
     return {
       data: mappedData,
@@ -605,7 +602,7 @@ export async function getAllLoans(
 ): Promise<{ data?: Loan[]; error?: string; count?: number }> {
   try {
     let query = supabase
-      .from('loans')
+      .from('cryptaura_loans')
       .select(`
         id,
         user_id,
@@ -618,11 +615,9 @@ export async function getAllLoans(
         due_date,
         interest_amount,
         total_repayment_amount,
-       
         admin_notes,
         purpose,
-        loan_plans:plan_id (title),
-        profiles:user_id (email, username)
+        cryptaura_profile!inner(email, username)
       `, { count: 'exact' })
       .order('created_at', { ascending: false });
 
@@ -649,25 +644,27 @@ export async function getAllLoans(
       return { error: 'Failed to fetch loans' };
     }
 
-    const mappedData = data?.map(loan => ({
-      id: loan.id,
-      userId: loan.user_id,
-      planId: loan.plan_id,
-      amount: loan.amount,
-      status: loan.status,
-      reference: loan.reference,
-      createdAt: loan.created_at,
-      approvedAt: loan.approved_at,
-      dueDate: loan.due_date,
-      interestAmount: loan.interest_amount,
-      totalRepaymentAmount: loan.total_repayment_amount,
-      // repaymentSchedule: loan.repayment_schedule || [],
-      adminNotes: loan.admin_notes,
-      purpose: loan.purpose,
-      planTitle: (loan.loan_plans as unknown as { title: string })?.title,
-      userEmail: (loan.profiles as unknown as { email: string })?.email,
-      username: (loan.profiles as unknown as { username: string })?.username
-    })) || [];
+    const mappedData = data?.map(loan => {
+      const plan = loanPlans.find(p => p.id === loan.plan_id);
+      return {
+        id: loan.id,
+        userId: loan.user_id,
+        planId: loan.plan_id,
+        amount: loan.amount,
+        status: loan.status,
+        reference: loan.reference,
+        createdAt: loan.created_at,
+        approvedAt: loan.approved_at,
+        dueDate: loan.due_date,
+        interestAmount: loan.interest_amount,
+        totalRepaymentAmount: loan.total_repayment_amount,
+        adminNotes: loan.admin_notes,
+        purpose: loan.purpose,
+        planTitle: plan?.title,
+        userEmail: loan.cryptaura_profile[0]?.email,
+        username: loan.cryptaura_profile[0]?.username
+      };
+    }) || [];
 
     return {
       data: mappedData,

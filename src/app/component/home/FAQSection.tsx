@@ -6,28 +6,36 @@ import { FiPlus, FiMinus } from 'react-icons/fi';
 
 const faqs = [
   {
-    question: "How do I create an account with Accilent Finance?",
+    question: "How do I create an account with CRYPTAURA INVESTSPHERE COMPANY?",
     answer: "Creating an account is simple. Click on the 'Get started' button at the top right corner of our website, fill in your details. The entire process takes less than 5 minutes."
   },
   {
     question: "What are the minimum investment requirements?",
-    answer: "Our Starter plan begins with a minimum investment of $100. We offer tiered investment plans to accommodate both new and experienced investors, with our Professional plan accepting up to $100,000."
+    answer: "Our Starter plan begins with a minimum investment of $100, with a maximum of $1,000. We offer tiered investment plans including Investors Plan ($999.99-$5,000), Standard Plan ($5,000-$10,000), and Executive Plan (unlimited investment) to accommodate both new and experienced investors."
   },
   {
-    question: "How often are profits paid out?",
-    answer: "Profits are paid daily, directly to your Accilent Finance wallet. You can withdraw these earnings or reinvest them to compound your returns."
+    question: "How are profits calculated and paid out?",
+    answer: "Profits are calculated as a one-time ROI based on your chosen plan: Starter Plan (30% after 24 hours), Investors Plan (35% after 48 hours), Standard Plan (45% after 7 days), and Executive Plan (50% after 14 days). Returns are paid directly to your CRYPTAURA INVESTSPHERE COMPANY wallet upon plan completion."
   },
   {
-    question: "Is my investment secure with Accilent Finance?",
+    question: "Is my investment secure with CRYPTAURA INVESTSPHERE COMPANY?",
     answer: "We employ bank-level security measures including 256-bit SSL encryption, two-factor authentication, and segregated client accounts. Your capital security is our top priority."
   },
   {
     question: "What withdrawal methods are available?",
-    answer: "We support multiple withdrawal methods including bank transfers, cryptocurrency (BTC, ETH, USDT), and e-wallets. Withdrawals are processed within 24-48 hours during business days."
+    answer: "We support multiple withdrawal methods including bank transfers, cryptocurrency (BTC, ETH, USDT), and e-wallets. Withdrawals are processed within 24-48 hours during business days with no withdrawal charges."
+  },
+  {
+    question: "What bonuses do you offer?",
+    answer: "We offer a 10% referral bonus for every person you refer to our platform and a 5% deposit bonus on all investments. There are no withdrawal charges on any of our plans."
   },
   {
     question: "Can I change my investment plan later?",
     answer: "Yes, you can upgrade your plan at any time. Any additional funds you deposit will automatically follow the terms of your new selected plan."
+  },
+  {
+    question: "How long does it take to start earning?",
+    answer: "Earnings begin immediately after your investment is confirmed. The ROI period starts from the moment your investment is processed and completes according to your chosen plan's duration (24 hours, 48 hours, 7 days, or 14 days)."
   }
 ];
 
@@ -50,7 +58,7 @@ export default function FAQSection() {
         >
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
           <p className="text-lg text-gray-600">
-            Find answers to common questions about our investment platform
+            Find answers to common questions about CRYPTAURA INVESTSPHERE COMPANY investment platform
           </p>
         </motion.div>
 

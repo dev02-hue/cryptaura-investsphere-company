@@ -6,9 +6,7 @@ import { sendWithdrawalNotificationToAdmin } from "./email";
 import { redirect } from "next/navigation";
 import nodemailer from "nodemailer";
 
- 
-
-  const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USERNAME,
@@ -37,7 +35,7 @@ export async function initiateWithdrawal({
         if (typeof window !== 'undefined') {
                   window.location.href = '/signin';
                 } else {
-                  redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+                  redirect('/signin');
                 }
         return { error: 'Not authenticated' };
       }
@@ -48,7 +46,7 @@ export async function initiateWithdrawal({
       // 2. Check user balance
       console.log('[initiateWithdrawal] Checking user balance...');
       const { data: profile, error: profileError } = await supabase
-        .from('accilent_profile')
+        .from('cryptaura_profile')
         .select('balance')
         .eq('id', userId)
         .single();
@@ -78,7 +76,7 @@ export async function initiateWithdrawal({
       // 5. Create withdrawal record
       console.log('[initiateWithdrawal] Creating withdrawal record...');
       const { data: withdrawal, error: withdrawalError } = await supabase
-        .from('withdrawals')
+        .from('cryptaura_withdrawals')
         .insert([{
           user_id: userId,
           amount,
@@ -122,7 +120,7 @@ export async function initiateWithdrawal({
 export async function approveWithdrawal(withdrawalId: string): Promise<{ success?: boolean; error?: string; currentStatus?: string }> {
   try {
     const { data: withdrawal, error: fetchError } = await supabase
-      .from('withdrawals')
+      .from('cryptaura_withdrawals')
       .select('status, user_id, amount, crypto_type')
       .eq('id', withdrawalId)
       .single();
@@ -136,7 +134,7 @@ export async function approveWithdrawal(withdrawalId: string): Promise<{ success
     }
 
     const { data: profile, error: profileError } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('balance, email, username')
       .eq('id', withdrawal.user_id)
       .single();
@@ -150,7 +148,7 @@ export async function approveWithdrawal(withdrawalId: string): Promise<{ success
     }
 
     const { error: processingError } = await supabase
-      .from('withdrawals')
+      .from('cryptaura_withdrawals')
       .update({
         status: 'processing',
         processed_at: new Date().toISOString()
@@ -161,21 +159,21 @@ export async function approveWithdrawal(withdrawalId: string): Promise<{ success
       return { error: 'Failed to process withdrawal' };
     }
 
-    const { error: balanceError } = await supabase.rpc('decrement_balance', {
+    const { error: balanceError } = await supabase.rpc('cryptaura_decrement_balance', {
       user_id: withdrawal.user_id,
       amount: withdrawal.amount
     });
 
     if (balanceError) {
       await supabase
-        .from('withdrawals')
+        .from('cryptaura_withdrawals')
         .update({ status: 'pending' })
         .eq('id', withdrawalId);
       return { error: 'Failed to update user balance' };
     }
 
     const { error: completeError } = await supabase
-      .from('withdrawals')
+      .from('cryptaura_withdrawals')
       .update({ status: 'completed' })
       .eq('id', withdrawalId);
 
@@ -185,7 +183,7 @@ export async function approveWithdrawal(withdrawalId: string): Promise<{ success
 
     // ✅ Send approval email
     await transporter.sendMail({
-      from: `Accilent Finance Limited <${process.env.EMAIL_USERNAME}>`,
+      from: `Cryptaura Finance Limited <${process.env.EMAIL_USERNAME}>`,
       to: profile.email,
       subject: `Withdrawal of $${withdrawal.amount} Approved`,
       html: `
@@ -195,7 +193,7 @@ export async function approveWithdrawal(withdrawalId: string): Promise<{ success
           <p>Your withdrawal of <strong>$${withdrawal.amount}</strong> in <strong>${withdrawal.crypto_type}</strong> has been successfully approved and processed.</p>
           <p>If you have any questions, feel free to contact support.</p>
           <br>
-          <p>Accilent Finance Limited<br><a href="mailto:accillents@gmail.com">accillents@gmail.com</a></p>
+          <p>Cryptaura Finance Limited<br><a href="mailto:cryptaura@gmail.com">cryptaura@gmail.com</a></p>
         </div>
       `
     });
@@ -211,7 +209,7 @@ export async function approveWithdrawal(withdrawalId: string): Promise<{ success
 export async function rejectWithdrawal(withdrawalId: string, adminNotes: string = ''): Promise<{ success?: boolean; error?: string; currentStatus?: string }> {
   try {
     const { data: withdrawal, error: fetchError } = await supabase
-      .from('withdrawals')
+      .from('cryptaura_withdrawals')
       .select('status, user_id, amount, crypto_type')
       .eq('id', withdrawalId)
       .single();
@@ -225,7 +223,7 @@ export async function rejectWithdrawal(withdrawalId: string, adminNotes: string 
     }
 
     const { data: profile, error: profileError } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('email, username')
       .eq('id', withdrawal.user_id)
       .single();
@@ -235,7 +233,7 @@ export async function rejectWithdrawal(withdrawalId: string, adminNotes: string 
     }
 
     const { error: updateError } = await supabase
-      .from('withdrawals')
+      .from('cryptaura_withdrawals')
       .update({
         status: 'rejected',
         processed_at: new Date().toISOString(),
@@ -249,7 +247,7 @@ export async function rejectWithdrawal(withdrawalId: string, adminNotes: string 
 
     // ✅ Send rejection email
     await transporter.sendMail({
-      from: `Accilent Finance Limited <${process.env.EMAIL_USERNAME}>`,
+      from: `Cryptaura Finance Limited <${process.env.EMAIL_USERNAME}>`,
       to: profile.email,
       subject: `Withdrawal of $${withdrawal.amount} Rejected`,
       html: `
@@ -260,7 +258,7 @@ export async function rejectWithdrawal(withdrawalId: string, adminNotes: string 
           ${adminNotes ? `<p><strong>Reason:</strong> ${adminNotes}</p>` : ''}
           <p>You may try again or contact support for more information.</p>
           <br>
-          <p>Accilent Finance Limited<br><a href="mailto:accillents@gmail.com">accillents@gmail.com</a></p>
+          <p>Cryptaura Finance Limited<br><a href="mailto:cryptaura@gmail.com">cryptaura@gmail.com</a></p>
         </div>
       `
     });
@@ -271,7 +269,6 @@ export async function rejectWithdrawal(withdrawalId: string, adminNotes: string 
     return { error: 'An unexpected error occurred' };
   }
 }
-
 
 // Get user withdrawals
 export async function getUserWithdrawals(
@@ -288,7 +285,7 @@ export async function getUserWithdrawals(
       if (typeof window !== 'undefined') {
         window.location.href = '/signin';
       } else {
-        redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+        redirect('/signin');
       }
       return { error: 'Not authenticated' };
     }
@@ -297,7 +294,7 @@ export async function getUserWithdrawals(
 
     // 2. Build base query
     let query = supabase
-      .from('withdrawals')
+      .from('cryptaura_withdrawals')
       .select(`
         id,
         amount,
@@ -365,7 +362,7 @@ export async function getAllWithdrawals(
   try {
     // 1. Build base query
     let query = supabase
-      .from('withdrawals')
+      .from('cryptaura_withdrawals')
       .select(`
         id,
         amount,
@@ -376,7 +373,7 @@ export async function getAllWithdrawals(
         processed_at,
         wallet_address,
         admin_notes,
-        accilent_profile!inner(email, username)
+        cryptaura_profile!inner(email, username)
       `, { count: 'exact' })
       .order('created_at', { ascending: false });
 
@@ -416,8 +413,8 @@ export async function getAllWithdrawals(
         processedAt: withdrawal.processed_at,
         walletAddress: withdrawal.wallet_address,
         adminNotes: withdrawal.admin_notes,
-        userEmail: withdrawal.accilent_profile[0]?.email,
-        username: withdrawal.accilent_profile[0]?.username
+        userEmail: withdrawal.cryptaura_profile[0]?.email,
+        username: withdrawal.cryptaura_profile[0]?.username
       })),
       count: count || 0
     };
@@ -426,5 +423,3 @@ export async function getAllWithdrawals(
     return { error: 'An unexpected error occurred' };
   }
 }
-
- 

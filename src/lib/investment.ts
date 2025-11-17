@@ -36,12 +36,12 @@ interface UserInvestmentWithPlan {
   status: 'active' | 'completed' | 'cancelled';
   next_payout_date?: string;
   total_payouts: number;
-  investment_plans: InvestmentPlan;
+  cryptaura_investment_plans: InvestmentPlan;
 }
 
 // Create a new investment
 export async function createInvestment(
-  planId: string, // Changed from number to string to match UUID type
+  planId: string,
   amount: number
 ): Promise<{ success?: boolean; error?: string; investment?: UserInvestment }> {
   try {
@@ -53,7 +53,7 @@ export async function createInvestment(
       if (typeof window !== 'undefined') {
                 window.location.href = '/signin';
               } else {
-                redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+                redirect('/signin');
               }
       return { error: 'Not authenticated' };
     }
@@ -63,9 +63,9 @@ export async function createInvestment(
 
     // Fetch investment plan with proper UUID handling
     const { data: plan, error: planError } = await supabase
-      .from('investment_plans')
+      .from('cryptaura_investment_plans')
       .select('*')
-      .eq('id', planId) // Now correctly comparing UUID to UUID
+      .eq('id', planId)
       .single();
 
     if (planError || !plan) {
@@ -104,7 +104,7 @@ export async function createInvestment(
 
     // Check user balance
     const { data: user, error: userError } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('balance')
       .eq('id', userId)
       .single();
@@ -147,7 +147,7 @@ export async function createInvestment(
 
     // Deduct amount from user balance first
     const { error: balanceUpdateError } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .update({ balance: user.balance - amount })
       .eq('id', userId);
 
@@ -158,7 +158,7 @@ export async function createInvestment(
 
     // Create investment record
     const { data: investment, error: investmentError } = await supabase
-      .from('user_investments')
+      .from('cryptaura_user_investments')
       .insert({
         user_id: userId,
         plan_id: planId,
@@ -177,7 +177,7 @@ export async function createInvestment(
       
       // Rollback balance deduction if investment creation fails
       await supabase
-        .from('accilent_profile')
+        .from('cryptaura_profile')
         .update({ balance: user.balance })
         .eq('id', userId);
       
@@ -217,7 +217,7 @@ export async function getUserInvestments(): Promise<{ data?: UserInvestment[]; e
       if (typeof window !== 'undefined') {
         window.location.href = '/signin';
       } else {
-        redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+        redirect('/signin');
       }
       return { error: 'Not authenticated' };
     }
@@ -225,7 +225,7 @@ export async function getUserInvestments(): Promise<{ data?: UserInvestment[]; e
     const userId = session.user.id;
 
     const { data, error } = await supabase
-      .from('user_investments')
+      .from('cryptaura_user_investments')
       .select<`
         id,
         plan_id,
@@ -236,7 +236,7 @@ export async function getUserInvestments(): Promise<{ data?: UserInvestment[]; e
         status,
         next_payout_date,
         total_payouts,
-        investment_plans!inner(title, percentage)
+        cryptaura_investment_plans!inner(title, percentage)
       `, UserInvestmentWithPlan>(`
         id,
         plan_id,
@@ -247,7 +247,7 @@ export async function getUserInvestments(): Promise<{ data?: UserInvestment[]; e
         status,
         next_payout_date,
         total_payouts,
-        investment_plans!inner(title, percentage)
+        cryptaura_investment_plans!inner(title, percentage)
       `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
@@ -269,8 +269,8 @@ export async function getUserInvestments(): Promise<{ data?: UserInvestment[]; e
         status: inv.status,
         nextPayoutDate: inv.next_payout_date,
         totalPayouts: inv.total_payouts,
-        planTitle: inv.investment_plans.title,
-        planPercentage: inv.investment_plans.percentage
+        planTitle: inv.cryptaura_investment_plans.title,
+        planPercentage: inv.cryptaura_investment_plans.percentage
       })) || []
     };
   } catch (err) {
@@ -289,7 +289,7 @@ export async function getInvestmentById(
       if (typeof window !== 'undefined') {
         window.location.href = '/signin';
       } else {
-        redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+        redirect('/signin');
       }
       return { error: 'Not authenticated' };
     }
@@ -297,7 +297,7 @@ export async function getInvestmentById(
     const userId = session.user.id;
 
     const { data, error } = await supabase
-      .from('user_investments')
+      .from('cryptaura_user_investments')
       .select<`
         id,
         plan_id,
@@ -308,7 +308,7 @@ export async function getInvestmentById(
         status,
         next_payout_date,
         total_payouts,
-        investment_plans!inner(title, percentage, duration_days, interval_days)
+        cryptaura_investment_plans!inner(title, percentage, duration_days, interval_days)
       `, UserInvestmentWithPlan>(`
         id,
         plan_id,
@@ -319,7 +319,7 @@ export async function getInvestmentById(
         status,
         next_payout_date,
         total_payouts,
-        investment_plans!inner(title, percentage, duration_days, interval_days)
+        cryptaura_investment_plans!inner(title, percentage, duration_days, interval_days)
       `)
       .eq('id', investmentId)
       .eq('user_id', userId)
@@ -346,8 +346,8 @@ export async function getInvestmentById(
         status: data.status,
         nextPayoutDate: data.next_payout_date,
         totalPayouts: data.total_payouts,
-        planTitle: data.investment_plans.title,
-        planPercentage: data.investment_plans.percentage
+        planTitle: data.cryptaura_investment_plans.title,
+        planPercentage: data.cryptaura_investment_plans.percentage
       }
     };
   } catch (err) {

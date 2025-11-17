@@ -1,5 +1,5 @@
 "use server";
- import { supabase } from "./supabaseClient";
+import { supabase } from "./supabaseClient";
 import { getSession } from "./auth";
 import { redirect } from "next/navigation";
 
@@ -34,7 +34,7 @@ export async function updateCryptoAddress({
       if (typeof window !== 'undefined') {
         window.location.href = '/signin';
       } else {
-        redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+        redirect('/signin');
       }
       return { error: 'Not authenticated' };
     }
@@ -52,7 +52,7 @@ export async function updateCryptoAddress({
 
     // 4. Update the profile in database
     const { error } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .update(updates)
       .eq('id', session.user.id);
 
@@ -81,7 +81,7 @@ export async function deleteCryptoAddress({
       if (typeof window !== 'undefined') {
         window.location.href = '/signin';
       } else {
-        redirect('/signin'); // for use in server-side functions (Next.js App Router only)
+        redirect('/signin');
       }
       return { error: 'Not authenticated' };
     }
@@ -94,7 +94,7 @@ export async function deleteCryptoAddress({
 
     // 3. Update the profile in database
     const { error } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .update(updates)
       .eq('id', session.user.id);
 
@@ -122,16 +122,16 @@ export async function getCryptoAddresses(): Promise<{
     const { session } = await getSession();
     if (!session?.user) {
       if (typeof window !== 'undefined') {
-                window.location.href = '/signin';
-              } else {
-                redirect('/signin'); // for use in server-side functions (Next.js App Router only)
-              }
+        window.location.href = '/signin';
+      } else {
+        redirect('/signin');
+      }
       return { error: 'Not authenticated' };
     }
 
     // 2. Fetch crypto addresses
     const { data: profile, error } = await supabase
-      .from('accilent_profile')
+      .from('cryptaura_profile')
       .select('btc_address, bnb_address, dodge_address, eth_address, solana_address, usdttrc20_address')
       .eq('id', session.user.id)
       .single();
@@ -157,5 +157,3 @@ export async function getCryptoAddresses(): Promise<{
     return { error: 'An unexpected error occurred' };
   }
 }
-
-

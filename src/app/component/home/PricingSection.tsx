@@ -7,42 +7,55 @@ import { useEffect, useRef } from "react";
 
 const plans = [
   {
-    title: "Starter",
-    percentage: 5,
+    title: "Starter Plan",
+    percentage: 30,
     min: "$100.00",
-    max: "$5,000.00",
-    duration: "Three Days",
-    interval: "Daily",
+    max: "$1,000.00",
+    duration: "24 Hours",
+    interval: "One-time",
     referral: "10%",
-    image: "/premium_photo-1682309799578-6e685bacd4e1.avif", // Path to your image
+    image: "/premium_photo-1682309799578-6e685bacd4e1.avif",
     icon: <FaCoins className="text-yellow-500" />,
     features: ["Ideal for beginners", "Low risk", "Quick returns"],
     popular: false,
   },
   {
-    title: "Advanced",
-    percentage: 8,
-    min: "$5,000.00",
-    max: "$11,500.00",
-    duration: "Four Days",
-    interval: "Daily",
+    title: "Investors Plan",
+    percentage: 35,
+    min: "$999.99",
+    max: "$5,000.00",
+    duration: "48 Hours",
+    interval: "One-time",
     referral: "10%",
-    image: "/premium_photo-1682309799578-6e685bacd4e1.avif", // Path to your image
+    image: "/premium_photo-1682309799578-6e685bacd4e1.avif",
     icon: <FaChartLine className="text-blue-500" />,
     features: ["Balanced growth", "Medium risk", "Priority support"],
     popular: true,
   },
   {
-    title: "Professional",
-    percentage: 10,
-    min: "$11,500.00",
-    max: "$100,000.00",
-    duration: "Five Days",
-    interval: "Daily",
+    title: "Standard Plan",
+    percentage: 45,
+    min: "$5,000.00",
+    max: "$10,000.00",
+    duration: "7 Days",
+    interval: "One-time",
     referral: "10%",
-    image: "/premium_photo-1682309799578-6e685bacd4e1.avif", // Path to your image
+    image: "/premium_photo-1682309799578-6e685bacd4e1.avif",
     icon: <FaGem className="text-purple-500" />,
     features: ["High returns", "VIP services", "Personal advisor"],
+    popular: false,
+  },
+  {
+    title: "Executive Plan",
+    percentage: 50,
+    min: "Unlimited",
+    max: "Unlimited",
+    duration: "14 Days",
+    interval: "One-time",
+    referral: "10%",
+    image: "/premium_photo-1682309799578-6e685bacd4e1.avif",
+    icon: <FaGem className="text-red-500" />,
+    features: ["Maximum returns", "Premium services", "Dedicated advisor"],
     popular: false,
   },
 ];
@@ -157,7 +170,7 @@ export default function PricingSection() {
               transition={{ delay: 0.3 }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mt-4 leading-tight"
             >
-              Tailored Investment <br className="hidden md:block" /> Solutions
+              Premium Investment <br className="hidden md:block" /> Solutions
             </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
@@ -165,20 +178,19 @@ export default function PricingSection() {
               transition={{ delay: 0.4 }}
               className="mt-6 text-lg text-gray-600 max-w-3xl mx-auto"
             >
-              Choose the perfect plan that matches your financial goals and risk
-              appetite. Our transparent pricing ensures you know exactly what
-              you&apos;re getting.
+              Choose the perfect plan that matches your financial goals at CRYPTAURA INVESTSPHERE COMPANY. 
+              Enjoy 10% referral bonus, 5% deposit bonus, and no withdrawal charges.
             </motion.p>
           </motion.div>
 
           <motion.div
             variants={containerVariant}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6"
           >
             {plans.map((plan, index) => (
               <motion.div
                 key={index}
-                className={`relative border border-gray-200 rounded-2xl p-8 flex flex-col items-center shadow-sm hover:shadow-xl bg-white transition-all ${
+                className={`relative border border-gray-200 rounded-2xl p-6 flex flex-col items-center shadow-sm hover:shadow-xl bg-white transition-all ${
                   plan.popular ? "ring-2 ring-teal-500" : ""
                 }`}
                 variants={cardVariant}
@@ -197,66 +209,66 @@ export default function PricingSection() {
                 )}
 
                 {/* Plan Image - Professional Integration */}
-                <div className="relative w-full h-40 mb-6 rounded-lg overflow-hidden">
+                <div className="relative w-full h-32 mb-4 rounded-lg overflow-hidden">
                   <Image
                     src={plan.image}
                     alt={`${plan.title} investment plan`}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                     priority={index === 0}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="text-2xl font-bold">{plan.title}</h3>
-                    <p className="text-teal-300 font-medium">
-                      {plan.percentage}% Daily Returns
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="text-xl font-bold">{plan.title}</h3>
+                    <p className="text-teal-300 font-medium text-sm">
+                      {plan.percentage}% ROI
                     </p>
                   </div>
                 </div>
 
                 <div className="relative w-full">
-                  <div className="text-5xl font-bold text-gray-900 flex items-center gap-1">
-                    <span className="text-3xl">%</span>
+                  <div className="text-4xl font-bold text-gray-900 flex items-center gap-1">
+                    <span className="text-2xl">%</span>
                     {plan.percentage}
-                    <span className="text-lg font-medium text-gray-500 ml-1">
-                      /Daily
+                    <span className="text-sm font-medium text-gray-500 ml-1">
+                      ROI
                     </span>
                   </div>
 
-                  <div className="mt-6 flex flex-col space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-teal-100 rounded-lg text-teal-600">
+                  <div className="mt-4 flex flex-col space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-1 bg-teal-100 rounded-lg text-teal-600">
                         {plan.icon}
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-800 text-sm">
                           Investment Range
                         </h4>
-                        <p className="text-gray-600">
+                        <p className="text-gray-600 text-xs">
                           {plan.min} - {plan.max}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-teal-100 rounded-lg text-teal-600">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-1 bg-teal-100 rounded-lg text-teal-600">
                         <FaRegCreditCard />
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-800 text-sm">
                           Duration
                         </h4>
-                        <p className="text-gray-600">{plan.duration}</p>
+                        <p className="text-gray-600 text-xs">{plan.duration}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-8">
-                    <h5 className="font-semibold text-gray-800 mb-3">
+                  <div className="mt-6">
+                    <h5 className="font-semibold text-gray-800 mb-2 text-sm">
                       Key Features:
                     </h5>
-                    <ul className="space-y-2">
+                    <ul className="space-y-1 text-xs">
                       {plan.features.map((feature, i) => (
                         <li key={i} className="flex items-start">
                           <span className="text-teal-600 mr-2">✓</span>
@@ -266,7 +278,19 @@ export default function PricingSection() {
                       <li className="flex items-start">
                         <span className="text-teal-600 mr-2">✓</span>
                         <span className="text-gray-700">
-                          Referral bonus: <strong>{plan.referral}</strong>
+                          Referral: <strong>{plan.referral}</strong>
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-teal-600 mr-2">✓</span>
+                        <span className="text-gray-700">
+                          Deposit bonus: <strong>5%</strong>
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="text-teal-600 mr-2">✓</span>
+                        <span className="text-gray-700">
+                          Withdrawal: <strong>No charges</strong>
                         </span>
                       </li>
                     </ul>
@@ -285,11 +309,11 @@ export default function PricingSection() {
                       boxShadow: "0 0 0 3px rgba(5, 150, 105, 0.5)",
                     }}
                     whileTap={{ scale: 0.95 }}
-                    className={`mt-10 w-full ${
+                    className={`mt-6 w-full ${
                       plan.popular
                         ? "bg-teal-600 text-white"
                         : "bg-white border-2 border-teal-600 text-teal-700"
-                    } px-6 py-3 rounded-lg font-semibold text-lg transition-colors`}
+                    } px-4 py-2 rounded-lg font-semibold text-sm transition-colors`}
                   >
                     {plan.popular ? "Get Premium Plan" : "Get Started"}
                   </motion.button>

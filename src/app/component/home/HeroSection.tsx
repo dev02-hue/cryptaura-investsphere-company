@@ -73,7 +73,7 @@ export default function HeroSection() {
               variants={fadeUp}
               className="mb-4 text-2xl font-bold leading-tight text-gray-900 xs:text-3xl sm:text-4xl md:mb-6 md:text-[2.8rem] lg:text-[3.2rem] xl:text-[3.5rem]"
             >
-              Modern <span className="text-teal-600">Financial</span> Solutions for Your Future
+              Modern <span className="text-teal-600">Investment</span> Solutions for Your Future
             </motion.h1>
 
             <motion.p
@@ -81,7 +81,7 @@ export default function HeroSection() {
               variants={fadeUp}
               className="mb-6 max-w-prose text-base leading-relaxed text-gray-600 sm:text-lg sm:leading-relaxed md:mb-8"
             >
-              Accilent Finance Limited provides innovative financial services designed to help you achieve your personal and business goals with confidence.
+              CRYPTAURA INVESTSPHERE COMPANY provides innovative investment services designed to help you achieve your personal and business goals with confidence.
             </motion.p>
 
             {/* Tabs Navigation - Stack on small screens */}

@@ -20,19 +20,19 @@ const AboutUs = () => {
         </div>
 
         <h2 className="text-3xl md:text-4xl font-bold text-[#003322]">
-          Achieve Your Business Goals
+          Achieve Your Investment Goals
         </h2>
 
         <p className="text-gray-600 text-base leading-relaxed">
-          Welcome to Accilent Finance Limited Investment Platform, your premier
-          gateway to diversified investment opportunities. At Accilent Finance
-          Limited, we are committed to maximizing your wealth through strategic
+          Welcome to CRYPTAURA INVESTSPHERE COMPANY Investment Platform, your premier
+          gateway to diversified investment opportunities. At CRYPTAURA INVESTSPHERE
+          COMPANY, we are committed to maximizing your wealth through strategic
           investments in four dynamic sectors: real estate, agriculture, crypto
           mining, and stock trading.
         </p>
 
         <p className="text-gray-600 text-base leading-relaxed">
-          Accilent Finance Limited was founded with a vision to empower
+          CRYPTAURA INVESTSPHERE COMPANY was founded with a vision to empower
           investors by providing access to a wide array of lucrative markets.
           Our team comprises seasoned professionals with deep expertise in each
           of our focus areas. By combining industry knowledge with cutting-edge
@@ -56,7 +56,7 @@ const AboutUs = () => {
         <div className="rounded-2xl overflow-hidden shadow-lg">
           <Image
             src="/berkay-samiloglu-CL8uRS9TkR4-unsplash.jpg" // Replace with actual path or import
-            alt="About Accilent"
+            alt="About CRYPTAURA INVESTSPHERE COMPANY"
             width={600}
             height={400}
             className="object-cover w-full h-full"

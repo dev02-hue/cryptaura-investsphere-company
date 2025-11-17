@@ -31,7 +31,7 @@ const LetsDoGreat = () => {
           transition={{ duration: 0.6 }}
           className="text-3xl md:text-4xl font-bold text-lime-400"
         >
-          Let’s Do Great!
+          Let&apos;s Do Great!
         </motion.h2>
         <motion.p
           initial={{ opacity: 0 }}
@@ -39,7 +39,7 @@ const LetsDoGreat = () => {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="text-sm md:text-base text-gray-200"
         >
-          Join Accilent Finance Limited Investment Platform today and take the first step towards a prosperous financial future.
+          Join CRYPTAURA INVESTSPHERE COMPANY Investment Platform today and take the first step towards a prosperous financial future.
         </motion.p>
       </div>
 

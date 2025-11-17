@@ -69,7 +69,7 @@ const UserDashboard: React.FC = () => {
 
         setUser({
           username: profileData.data.username,
-          referralLink: `https://accilent-finance-limited.vercel.app/signup?ref_id=${profileData.data.referralCode}`
+          referralLink: `https://cryptaura-investsphere-company.vercel.app/signup?ref_id=${profileData.data.referralCode}`
         });
 
         setUserStats({
