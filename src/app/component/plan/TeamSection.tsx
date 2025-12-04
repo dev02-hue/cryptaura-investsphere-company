@@ -10,18 +10,18 @@ const teamMembers = [
     image: '/7fGoXFKQNtIxY7BekxXa1ZxwomAnIdf1ea0QoYol.jpg',
     socials: { facebook: '#', linkedin: '#', twitter: '#' },
   },
-  {
-    name: 'Henry Wright',
-    title: 'Head Of Operations',
-    image: '/mYm7lkdwlUOAM4Qcn5tBlxtEF6EJHLA7lGnxR36r.jpg',
-    socials: { facebook: '#', linkedin: '#', twitter: '#' },
-  },
-  {
-    name: 'Amelia Brooks',
-    title: 'Head Of Marketing',
-    image: '/vV2jU4e7iOebrM8urD9HDfK2JADwJJVjAgdWQZz9.jpg',
-    socials: { facebook: '#', linkedin: '#', twitter: '#' },
-  },
+  // {
+  //   name: 'Henry Wright',
+  //   title: 'Head Of Operations',
+  //   image: '/mYm7lkdwlUOAM4Qcn5tBlxtEF6EJHLA7lGnxR36r.jpg',
+  //   socials: { facebook: '#', linkedin: '#', twitter: '#' },
+  // },
+  // {
+  //   name: 'Amelia Brooks',
+  //   title: 'Head Of Marketing',
+  //   image: '/vV2jU4e7iOebrM8urD9HDfK2JADwJJVjAgdWQZz9.jpg',
+  //   socials: { facebook: '#', linkedin: '#', twitter: '#' },
+  // },
 ];
 
 const TeamSection = () => {
